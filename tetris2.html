@@ -11,8 +11,11 @@
         <div id="play-screen">
         </div>
         <div id="level" data-name="1000"></div>
+        <div id="side-screen">
+        <h1 id="title">jTetris</h1>
         <p id="level-text">Level: </p>
         <div id="level-tally" data-name="10">1</div>
+        </div>
         <div id="hidder"></div>
         <button id="start" style="">Start</button>
         <button id="turnTile" class="button" style="display: none"><img src="images/arrow_spin.png" class="arrow"></button>
@@ -21,6 +24,7 @@
         <button id="downButton" class="button" style="display: none"><img src="images/arrow_down.png" class="arrow"></button>
         
     </div>
+        <div id="footer">by: Robert Black</div>
         <script type="text/javascript">
 
 
@@ -31,10 +35,12 @@ $( document ).ready(function() {
         }
     }
     $("#start").click(function() {
+        var keySafety = 0;
         $("#start").attr("style", "display: none");
         $(".button").attr("style", "display: initial");
         makeTile();
         function makeTile() {
+            keySafety++;
             var newInterval = parseInt($("#level").attr("data-name"));
             newInterval = (newInterval/1.01);
             $("#level").attr("data-name", newInterval);
@@ -160,7 +166,14 @@ $( document ).ready(function() {
             makeTile();
             }
             function moveTileDown() {
-                for(var i=22; i>0; i--){
+                for(var i=1; i<11; i++){
+                    if($("#1x"+i).hasClass("set") || $("#2x"+i).hasClass("set")){
+                        $("#play-screen").html("<h1>YOU LOSE!!</h1><br><a href='https://quiet-cliffs-17609.herokuapp.com/'>Play Again?</a>");
+                        clearInterval(timer);
+                        return;
+                    }
+                }
+                for(i=22; i>0; i--){
                     for(var j=1; j<11; j++){
                         for(var k=1; k<11; k++){
                          if($("#"+i+"x"+k).hasClass("tile")){
@@ -361,6 +374,22 @@ $( document ).ready(function() {
             $("#downButton").click(function(){
                     moveTileDown();
             });
+            if(keySafety==1){
+            $(window).keydown(function(e) {
+  switch (e.keyCode) {
+    case 37: moveTileLeft();
+        return;
+    case 38: flipTile();
+      e.preventDefault();
+      return;
+    case 39: moveTileRight();
+      return;
+    case 40: moveTileDown();
+      e.preventDefault();
+      return;
+  }
+});
+        }
             $("#turnTile").click(function(){
                 flipTile();
             });
@@ -370,6 +399,9 @@ $( document ).ready(function() {
             $("#leftButton").click(function(){
                 moveTileLeft();
             });
+            for (var i = 1; i < 999; i++) {
+    window.clearInterval(i);
+}
             var timeInterval = parseInt($("#level").attr("data-name"));
             var timer = setInterval(function(){ moveTileDown() }, timeInterval);
         }
