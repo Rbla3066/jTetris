@@ -21,7 +21,7 @@
 	position: relative;
 	border-style: groove;
 	border-width: 4px;
-	border-color: black;
+	border-color: #d7ceb2;
 	outline-color: gray;
 	top: -375px;
 	left: 30px;
@@ -76,7 +76,7 @@
 	border-style: groove;
 	border-width: 0px;
 	border-bottom-width: 4px;
-	border-color: black;
+	border-color: #d7ceb2;
 	outline-color: gray
 }
 .set{
@@ -112,6 +112,7 @@
 }
 .button {
 	border-style: solid;
+	border-color: black;
 	border-width: 2px;
 }
 #downButton {
