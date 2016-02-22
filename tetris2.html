@@ -100,7 +100,7 @@ $( document ).ready(function() {
             if(shapes[tileNum].first[i] == 1 || shapes[tileNum].first[i] == 2){
                 $("#1x"+(pos+i)).addClass( "tile" );
                 $("#1x"+(pos+i)).removeClass( "block" );
-                $("#1x"+(pos+i)).attr("style", "background-color: "+col);
+                $("#1x"+(pos+i)).attr("style", "background-image: url(images/"+col+".jpg)");
                 if(shapes[tileNum].first[i] == 2){
                    $("#1x"+(pos+i)).addClass( "center" );
                 }
@@ -108,7 +108,7 @@ $( document ).ready(function() {
             if(shapes[tileNum].second[i] == 1){
                 $("#2x"+(pos+i)).addClass( "tile" );
                 $("#2x"+(pos+i)).removeClass( "block" );
-                $("#2x"+(pos+i)).attr("style", "background-color: "+col);
+                $("#2x"+(pos+i)).attr("style", "background-image: url(images/"+col+".jpg)");
             }
           }
 
@@ -302,7 +302,7 @@ $( document ).ready(function() {
                 for(var i=1; i<23; i++){
                     for(var j=1; j<11; j++){
                         if($("#"+i+"x"+j).hasClass("center")){
-                            if($("#"+i+"x"+j).attr("style")=="background-color: orange"){
+                            if($("#"+i+"x"+j).attr("style")=="background-image: url(images/orange.jpg)"){
                                 if(i==1 || i==2 || i == 22 || i==21 || j==1 || j==2 || j==10 || j==9){
                                     return;
                                 }
