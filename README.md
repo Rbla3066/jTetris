@@ -1,3 +1,3 @@
 #jTetris
 
-My take on tetris using jQuery. Still need to add a score board and make it more visually appealing.
+My take on tetris using jQuery. Works great but my code certainly needs some cleaning up though.

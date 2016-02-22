@@ -20,13 +20,13 @@
 	float: left;
 	position: relative;
 	border-style: groove;
-	border-width: 5px;
+	border-width: 4px;
 	border-color: #d7ceb2;
 	outline-color: gray;
 	top: -375px;
 	left: 30px;
 	height: 300px;
-	width: 150px;
+	width: 160px;
 	background-image: url(images/blackback.jpg);
 	background-size: cover;
 	margin-left: 30px;
@@ -40,7 +40,7 @@
 	z-index: 8;
 }
 #hidder {
-	width: 228px;
+	width: 232px;
 	height: 44px;
 	background-image: url(images/background.jpeg);
 	z-index: 20;
@@ -71,14 +71,13 @@
 	margin: auto;
 	z-index: 20;
 }
-#button {
-	margin-top: 50px;
-}
 #title {
-	text-shadow: 3px 3px 0px #2c2e38, 5px 5px 0px #5c5f72;
-	color: #d7ceb2;
-	font: 40px 'BazarMedium';
-	text-align: center;
+	height: 94px;
+	border-style: groove;
+	border-width: 0px;
+	border-bottom-width: 4px;
+	border-color: #d7ceb2;
+	outline-color: gray
 }
 .set{
 	height: 20px;
@@ -97,46 +96,44 @@
 	border-color: #d7ceb2;
 	width: 800px;
 	z-index: -20;
+	margin:auto;
 	height: 600px;
 	border-bottom-width: 0px;
 }
-.arrow {
-	height: 28px;
-	border-style: solid;
-	border-width: 2px;
-}
 #start {
+	height: 100px;
 	font-size: 36px;
 	position: relative;
 	top: -350px;
-	left: 400px;
-	background-color: gray;
-	outline-color: gray;
-	border-color: white;
-	border-style: groove;
-	border-color: #d7ceb2;
-	border-width: 5px;
-	font: 'BazarMedium';
+	left: 380px;
+}
+.button {
+	border-style: solid;
+	border-width: 2px;
 }
 #downButton {
 	position: relative;
-	top: -250px;
-	left: 273px;
+	top: -225px;
+	left: 210px;
+	height: 65px;
 }
 #leftButton {
 	position: relative;
 	top: -300px;
-	left: 310px;
+	left: 270px;
+	width: 65px;
 }
 #rightButton {
 	position: relative;
 	top: -300px;
-	left: 390px;
+	left: 365px;
+	width: 65px;
 }
 #turnTile {
 	position: relative;
 	top: -300px;
-	left: 429px;
+	left: 428px;
+	height: 65px;
 }
 #level-tally {
 	font-size: 24px;
@@ -156,6 +153,7 @@
 #footer {
 	background-image: url(images/footer.jpg);
 	background-size: cover;
+	margin: auto;
 	font-size: 16px;
 	font-weight: bold;
 	border-width: 5px;
@@ -170,4 +168,11 @@
 	padding-right: 10px;
 
 }
+#back {
+	background-color: black;
+	background-size: cover;
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
+
 
