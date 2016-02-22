@@ -132,10 +132,11 @@ $( document ).ready(function() {
                         }
                 clearInterval(timer);
                 makeTile();
+                return;
                 }
+            makeTile();
             }
             function moveTileDown() {
-                lineCheck();
                 for(var i=22; i>0; i--){
                     for(var j=1; j<11; j++){
                         for(var k=1; k<11; k++){
@@ -154,7 +155,8 @@ $( document ).ready(function() {
                                     }
                                 }
                                 clearInterval(timer);
-                                makeTile();
+                                lineCheck();
+                                return
                             }
                           }
                         }
@@ -174,7 +176,8 @@ $( document ).ready(function() {
                                     }
                                 }
                                 clearInterval(timer);
-                                makeTile();
+                                lineCheck();
+                                return
                             }
                           }
                         }
@@ -194,7 +197,8 @@ $( document ).ready(function() {
                                     }
                                 }
                                 clearInterval(timer);
-                                makeTile();
+                                lineCheck();
+                                return
                             }
                           }
                         }
@@ -243,31 +247,32 @@ $( document ).ready(function() {
                 }
             }
             function flipTile(){
+                function replaceBlock(a, b, c, d){
+                    $("#"+a+"x"+b).attr("class", ($("#"+c+"x"+d)).attr("class"));
+                    $("#"+a+"x"+b).attr("style", ($("#"+c+"x"+d)).attr("style"));
+                }
                 for(var i=1; i<23; i++){
                     for(var j=1; j<11; j++){
                         if($("#"+i+"x"+j).hasClass("center")){
                             if($("#"+i+"x"+j).attr("style")=="background-color: orange"){
+                                if(i==1 || i==2 || i == 22 || i==21 || j==1 || j==2 || j==10 || j==9){
+                                    return;
+                                }
                                 if($("#"+(i+1)+"x"+j).hasClass("set") || $("#"+(i+2)+"x"+j).hasClass("set") || $("#"+(i-1)+"x"+j).hasClass("set") || $("#"+(i-2)+"x"+j).hasClass("set") || $("#"+i+"x"+(j+1)).hasClass("set") || $("#"+i+"x"+(j-1)).hasClass("set") || $("#"+i+"x"+(j+2)).hasClass("set") || $("#"+i+"x"+(j-2)).hasClass("set")){
                                     return;
                                 }
                                 var lineClass = $("#"+i+"x"+(j-1)).attr("class");
                                 var lineStyle = $("#"+i+"x"+(j-1)).attr("style");
-                                $("#"+i+"x"+(j-1)).attr("class", ($("#"+(i+1)+"x"+j)).attr("class"));
-                                $("#"+i+"x"+(j-1)).attr("style", ($("#"+(i+1)+"x"+j)).attr("style"));
-                                $("#"+(i+1)+"x"+j).attr("class", ($("#"+i+"x"+(j+1))).attr("class"));
-                                $("#"+(i+1)+"x"+j).attr("style", ($("#"+i+"x"+(j+1))).attr("style"));
-                                $("#"+i+"x"+(j+1)).attr("class", ($("#"+(i-1)+"x"+j)).attr("class"));
-                                $("#"+i+"x"+(j+1)).attr("style", ($("#"+(i-1)+"x"+j)).attr("style"));
+                                replaceBlock(i, (j-1), (i+1), j);
+                                replaceBlock((i+1), j, i, (j+1));
+                                replaceBlock(i, (j+1), (i-1), j);
                                 $("#"+(i-1)+"x"+j).attr("class", lineClass);
                                 $("#"+(i-1)+"x"+j).attr("style", lineStyle);
                                 lineClass = $("#"+(i-2)+"x"+j).attr("class");
                                 lineStyle = $("#"+(i-2)+"x"+j).attr("style");
-                                $("#"+(i-2)+"x"+j).attr("class", ($("#"+i+"x"+(j-2))).attr("class"));
-                                $("#"+(i-2)+"x"+j).attr("style", ($("#"+i+"x"+(j-2))).attr("style"));
-                                $("#"+i+"x"+(j-2)).attr("class", ($("#"+(i+2)+"x"+j)).attr("class"));
-                                $("#"+i+"x"+(j-2)).attr("style", ($("#"+(i+2)+"x"+j)).attr("style"));
-                                $("#"+(i+2)+"x"+j).attr("class", ($("#"+i+"x"+(j+2))).attr("class"));
-                                $("#"+(i+2)+"x"+j).attr("style", ($("#"+i+"x"+(j+2))).attr("style"));
+                                replaceBlock((i-2), j, i, (j-2));
+                                replaceBlock(i, (j-2), (i+2), j);
+                                replaceBlock((i+2), j, i, (j+2));
                                 $("#"+i+"x"+(j+2)).attr("class", lineClass);
                                 $("#"+i+"x"+(j+2)).attr("style", lineStyle);
                                 return;
@@ -281,26 +286,19 @@ $( document ).ready(function() {
                                 }
                                 var startClass = $("#"+i+"x"+(j-1)).attr("class");
                                 var startStyle = $("#"+i+"x"+(j-1)).attr("style");
-                                $("#"+i+"x"+(j-1)).attr("class", ($("#"+(i+1)+"x"+j)).attr("class"));
-                                $("#"+i+"x"+(j-1)).attr("style", ($("#"+(i+1)+"x"+j)).attr("style"));
-                                $("#"+(i+1)+"x"+j).attr("class", ($("#"+i+"x"+(j+1))).attr("class"));
-                                $("#"+(i+1)+"x"+j).attr("style", ($("#"+i+"x"+(j+1))).attr("style"));
-                                $("#"+i+"x"+(j+1)).attr("class", ($("#"+(i-1)+"x"+j)).attr("class"));
-                                $("#"+i+"x"+(j+1)).attr("style", ($("#"+(i-1)+"x"+j)).attr("style"));
+                                replaceBlock(i, (j-1), (i+1), j);
+                                replaceBlock((i+1), j, i, (j+1));
+                                replaceBlock(i, (j+1), (i-1), j);
                                 $("#"+(i-1)+"x"+j).attr("class", startClass);
                                 $("#"+(i-1)+"x"+j).attr("style", startStyle);
                                 startClass = $("#"+(i-1)+"x"+(j-1)).attr("class");
                                 startStyle = $("#"+(i-1)+"x"+(j-1)).attr("style");
-                                $("#"+(i-1)+"x"+(j-1)).attr("class", ($("#"+(i+1)+"x"+(j-1))).attr("class"));
-                                $("#"+(i-1)+"x"+(j-1)).attr("style", ($("#"+(i+1)+"x"+(j-1))).attr("style"));
-                                $("#"+(i+1)+"x"+(j-1)).attr("class", ($("#"+(i+1)+"x"+(j+1))).attr("class"));
-                                $("#"+(i+1)+"x"+(j-1)).attr("style", ($("#"+(i+1)+"x"+(j+1))).attr("style"));
-                                $("#"+(i+1)+"x"+(j+1)).attr("class", ($("#"+(i-1)+"x"+(j+1))).attr("class"));
-                                $("#"+(i+1)+"x"+(j+1)).attr("style", ($("#"+(i-1)+"x"+(j+1))).attr("style"));
+                                replaceBlock((i-1), (j-1), (i+1), (j-1));
+                                replaceBlock((i+1), (j-1), (i+1), (j+1));
+                                replaceBlock((i+1), (j+1), (i-1), (j+1));
                                 $("#"+(i-1)+"x"+(j+1)).attr("class", startClass);
                                 $("#"+(i-1)+"x"+(j+1)).attr("style", startStyle);
                                 return;
-
                         }
                     }
                 }
