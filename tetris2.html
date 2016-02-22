@@ -1,0 +1,363 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tetris</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="jquery-2.2.0.js"></script>
+    </head>
+    <body>
+    <div id="wrapper">
+        <div id="play-screen">
+        </div>
+        <div id="hidder"></div>
+        <button id="start" style="">Start</button>
+        <button id="turnTile" class="button" style="display: none">Flip</button>
+        <button id="leftButton" class="button" style="display: none">Left</button>
+        <button id="rightButton" class="button" style="display: none">Right</button>
+        <button id="downButton" class="button" style="display: none">Down</button>
+        
+    </div>
+        <script type="text/javascript">
+
+
+$( document ).ready(function() {
+    for(var i=1; i<23; i++){
+        for(var j=1; j<11; j++){
+             $("#play-screen").append("<div id='"+i+"x"+j+"' class='block' style=''></div>");
+        }
+    }
+    $("#start").click(function() {
+        $("#start").attr("style", "display: none");
+        $(".button").attr("style", "display: initial");
+        makeTile();
+        function makeTile() {
+          var shapes = {
+            0 : {
+                color : "red",
+                name : "square",
+                first : [1, 1],
+                second : [1, 1]
+            },
+            1 : {
+                color : "orange",
+                name : "line",
+                first : [1, 1, 2, 1],
+                second : [0, 0, 0, 0]
+            },
+            2 : {
+                color : "yellow",
+                name : "tee",
+                first : [1, 2, 1],
+                second : [0, 1, 0]
+            },
+            3 : {
+                color : "blue",
+                name : "ell",
+                first : [1, 2, 1],
+                second : [0, 0, 1]
+            },
+            4 : {
+                color : "green",
+                name : "zeeOne",
+                first : [1, 2, 0],
+                second : [0, 1, 1]
+            },
+            5 : {
+                color : "teal",
+                name : "zeeTwo",
+                first : [0, 2, 1],
+                second : [1, 1, 0]
+            }
+        }
+          var tileNum = Math.floor(Math.random() * 6);
+          var row = shapes[tileNum].first.length;
+          var span = 10-row;
+          var pos = Math.floor((Math.random() * span)+1);
+          for(var i=0; i<row; i++){
+            var col = shapes[tileNum].color;
+            if(shapes[tileNum].first[i] == 1 || shapes[tileNum].first[i] == 2){
+                $("#1x"+(pos+i)).addClass( "tile" );
+                $("#1x"+(pos+i)).removeClass( "block" );
+                $("#1x"+(pos+i)).attr("style", "background-color: "+col);
+                if(shapes[tileNum].first[i] == 2){
+                   $("#1x"+(pos+i)).addClass( "center" );
+                }
+            }
+            if(shapes[tileNum].second[i] == 1){
+                $("#2x"+(pos+i)).addClass( "tile" );
+                $("#2x"+(pos+i)).removeClass( "block" );
+                $("#2x"+(pos+i)).attr("style", "background-color: "+col);
+            }
+          }
+
+            function lineCheck(){
+                var winner = false;
+                for(var i=22; i>0; i--){
+                    var winBool = true;
+                    for(var j=1; j<11; j++){
+                        if($("#"+i+"x"+j).hasClass("block")){
+                            winBool = false;
+                        }
+                    }
+                    if(winBool){
+                        winner=true;
+                        for(var ii=1; ii<11; ii++){
+                            $("#"+i+"x"+ii).addClass("winLine");
+                            $("#"+i+"x"+ii).removeClass("set");
+                            $("#"+i+"x"+ii).attr("style", "background-color: gray");
+                        }
+                    }
+                }
+                if(winner){
+                        for(var i=22; i>0; i--){
+                            if($("#"+i+"x1").hasClass("winLine")){
+                                for(var ii=i; ii>1; ii--){
+                                    for(var j=1; j<11; j++){
+                                        $("#"+ii+"x"+j).removeClass("center");
+                                        $("#"+ii+"x"+j).attr("class", $("#"+(ii-1)+"x"+j).attr("class"));
+                                        $("#"+ii+"x"+j).attr("style", $("#"+(ii-1)+"x"+j).attr("style"));
+                                        if($("#"+ii+"x"+j).hasClass("tile")){
+                                            $("#"+ii+"x"+j).addClass("set");
+                                            $("#"+ii+"x"+j).removeClass("tile");
+                                        }
+                                    }
+                                }
+                                for(var w=1; w<23; w++){
+                                    if($("#"+w+"x1").hasClass("winLine")){
+                                        lineCheck();
+                                    }
+                                }
+                            }
+                        }
+                clearInterval(timer);
+                makeTile();
+                }
+            }
+            function moveTileDown() {
+                lineCheck();
+                for(var i=22; i>0; i--){
+                    for(var j=1; j<11; j++){
+                        for(var k=1; k<11; k++){
+                         if($("#"+i+"x"+k).hasClass("tile")){
+                            if(i+1 == 23 || $("#"+(i+1)+"x"+k).hasClass("set")){
+                                for(var t=22; t>0; t--){
+                                    for(var p=1; p<11; p++){
+                                        if($("#"+t+"x"+p).hasClass("tile")){
+                                            $("#"+t+"x"+p).addClass( "set" );
+                                            $("#"+t+"x"+p).removeClass( "tile" );
+                                            $("#"+t+"x"+p).removeClass( "block" );
+                                            if($("#"+t+"x"+p).hasClass("center")){
+                                                $("#"+t+"x"+p).removeClass("center");
+                                            } 
+                                        }
+                                    }
+                                }
+                                clearInterval(timer);
+                                makeTile();
+                            }
+                          }
+                        }
+                        for(var kk=1; kk<11; kk++){
+                         if($("#"+(i-1)+"x"+kk).hasClass("tile")){
+                            if($("#"+i+"x"+kk).hasClass("set")){
+                                for(var tt=22; tt>0; tt--){
+                                    for(var pp=1; pp<11; pp++){
+                                        if($("#"+tt+"x"+pp).hasClass("tile")){
+                                            $("#"+tt+"x"+pp).addClass( "set" );
+                                            $("#"+tt+"x"+pp).removeClass( "tile" );
+                                            $("#"+tt+"x"+pp).removeClass( "block" );
+                                            if($("#"+tt+"x"+pp).hasClass("center")){
+                                                $("#"+tt+"x"+pp).removeClass("center");
+                                            } 
+                                        }
+                                    }
+                                }
+                                clearInterval(timer);
+                                makeTile();
+                            }
+                          }
+                        }
+                        for(kk=1; kk<11; kk++){
+                         if($("#"+(i-2)+"x"+kk).hasClass("tile")){
+                            if($("#"+(i-1)+"x"+kk).hasClass("set")){
+                                for(var tt=22; tt>0; tt--){
+                                    for(var pp=1; pp<11; pp++){
+                                        if($("#"+tt+"x"+pp).hasClass("tile")){
+                                            $("#"+tt+"x"+pp).addClass( "set" );
+                                            $("#"+tt+"x"+pp).removeClass( "tile" );
+                                            $("#"+tt+"x"+pp).removeClass( "block" );
+                                            if($("#"+tt+"x"+pp).hasClass("center")){
+                                                $("#"+tt+"x"+pp).removeClass("center");
+                                            } 
+                                        }
+                                    }
+                                }
+                                clearInterval(timer);
+                                makeTile();
+                            }
+                          }
+                        }
+                        if($("#"+i+"x"+j).hasClass("tile") && $("#"+(i+1)+"x"+j).hasClass("block")){
+                                var curStyle = $("#"+i+"x"+j).attr("style");
+                                $("#"+(i+1)+"x"+j).attr("style", curStyle);
+                                $("#"+(i+1)+"x"+j).addClass( "tile" );
+                                $("#"+(i+1)+"x"+j).removeClass( "block" );
+                                $("#"+i+"x"+j).attr("style", "");
+                                $("#"+i+"x"+j).addClass( "block" );
+                                $("#"+i+"x"+j).removeClass( "tile" );
+                                if($("#"+i+"x"+j).hasClass("center")){
+                                    $("#"+i+"x"+j).removeClass("center");
+                                    $("#"+(i+1)+"x"+j).addClass("center");
+                                } 
+                        }
+                    }
+                }
+            }
+            function moveTileRight(){
+                for(var i=1; i<23; i++){
+                    for(var j=1; j<11; j++){
+                        if($("#"+i+"x"+j).hasClass("tile")){
+                            if(j == 10 || $("#"+i+"x"+(j+1)).hasClass("set")){
+                                return;
+                            }
+                        }
+                    }
+                }
+                for(i=1; i<23; i++){
+                    for(j=10; j>0; j--){
+                       if($("#"+i+"x"+j).hasClass("tile") && $("#"+i+"x"+(j+1)).hasClass("block")){
+                                var curStyle = $("#"+i+"x"+j).attr("style");
+                                $("#"+i+"x"+(j+1)).attr("style", curStyle);
+                                $("#"+i+"x"+(j+1)).addClass( "tile" );
+                                $("#"+i+"x"+(j+1)).removeClass( "block" );
+                                $("#"+i+"x"+j).attr("style", "");
+                                $("#"+i+"x"+j).addClass( "block" );
+                                $("#"+i+"x"+j).removeClass( "tile" );
+                                if($("#"+i+"x"+j).hasClass("center")){
+                                    $("#"+i+"x"+j).removeClass("center");
+                                    $("#"+i+"x"+(j+1)).addClass("center");
+                                } 
+                        } 
+                    }
+                }
+            }
+            function flipTile(){
+                for(var i=1; i<23; i++){
+                    for(var j=1; j<11; j++){
+                        if($("#"+i+"x"+j).hasClass("center")){
+                            if($("#"+i+"x"+j).attr("style")=="background-color: orange"){
+                                if($("#"+(i+1)+"x"+j).hasClass("set") || $("#"+(i+2)+"x"+j).hasClass("set") || $("#"+(i-1)+"x"+j).hasClass("set") || $("#"+(i-2)+"x"+j).hasClass("set") || $("#"+i+"x"+(j+1)).hasClass("set") || $("#"+i+"x"+(j-1)).hasClass("set") || $("#"+i+"x"+(j+2)).hasClass("set") || $("#"+i+"x"+(j-2)).hasClass("set")){
+                                    return;
+                                }
+                                var lineClass = $("#"+i+"x"+(j-1)).attr("class");
+                                var lineStyle = $("#"+i+"x"+(j-1)).attr("style");
+                                $("#"+i+"x"+(j-1)).attr("class", ($("#"+(i+1)+"x"+j)).attr("class"));
+                                $("#"+i+"x"+(j-1)).attr("style", ($("#"+(i+1)+"x"+j)).attr("style"));
+                                $("#"+(i+1)+"x"+j).attr("class", ($("#"+i+"x"+(j+1))).attr("class"));
+                                $("#"+(i+1)+"x"+j).attr("style", ($("#"+i+"x"+(j+1))).attr("style"));
+                                $("#"+i+"x"+(j+1)).attr("class", ($("#"+(i-1)+"x"+j)).attr("class"));
+                                $("#"+i+"x"+(j+1)).attr("style", ($("#"+(i-1)+"x"+j)).attr("style"));
+                                $("#"+(i-1)+"x"+j).attr("class", lineClass);
+                                $("#"+(i-1)+"x"+j).attr("style", lineStyle);
+                                lineClass = $("#"+(i-2)+"x"+j).attr("class");
+                                lineStyle = $("#"+(i-2)+"x"+j).attr("style");
+                                $("#"+(i-2)+"x"+j).attr("class", ($("#"+i+"x"+(j-2))).attr("class"));
+                                $("#"+(i-2)+"x"+j).attr("style", ($("#"+i+"x"+(j-2))).attr("style"));
+                                $("#"+i+"x"+(j-2)).attr("class", ($("#"+(i+2)+"x"+j)).attr("class"));
+                                $("#"+i+"x"+(j-2)).attr("style", ($("#"+(i+2)+"x"+j)).attr("style"));
+                                $("#"+(i+2)+"x"+j).attr("class", ($("#"+i+"x"+(j+2))).attr("class"));
+                                $("#"+(i+2)+"x"+j).attr("style", ($("#"+i+"x"+(j+2))).attr("style"));
+                                $("#"+i+"x"+(j+2)).attr("class", lineClass);
+                                $("#"+i+"x"+(j+2)).attr("style", lineStyle);
+                                return;
+
+                            }
+                                if(j==10 || j==1 || i==22 || i==1){
+                                    return;
+                                }
+                                if($("#"+(i+1)+"x"+j).hasClass("set") || $("#"+(i+1)+"x"+(j-1)).hasClass("set") || $("#"+(i+1)+"x"+(j+1)).hasClass("set") || $("#"+(i-1)+"x"+(j-1)).hasClass("set") || $("#"+i+"x"+(j+1)).hasClass("set") || $("#"+i+"x"+(j-1)).hasClass("set") || $("#"+(i-1)+"x"+j).hasClass("set") || $("#"+(i-1)+"x"+(j+1)).hasClass("set")){
+                                    return;
+                                }
+                                var startClass = $("#"+i+"x"+(j-1)).attr("class");
+                                var startStyle = $("#"+i+"x"+(j-1)).attr("style");
+                                $("#"+i+"x"+(j-1)).attr("class", ($("#"+(i+1)+"x"+j)).attr("class"));
+                                $("#"+i+"x"+(j-1)).attr("style", ($("#"+(i+1)+"x"+j)).attr("style"));
+                                $("#"+(i+1)+"x"+j).attr("class", ($("#"+i+"x"+(j+1))).attr("class"));
+                                $("#"+(i+1)+"x"+j).attr("style", ($("#"+i+"x"+(j+1))).attr("style"));
+                                $("#"+i+"x"+(j+1)).attr("class", ($("#"+(i-1)+"x"+j)).attr("class"));
+                                $("#"+i+"x"+(j+1)).attr("style", ($("#"+(i-1)+"x"+j)).attr("style"));
+                                $("#"+(i-1)+"x"+j).attr("class", startClass);
+                                $("#"+(i-1)+"x"+j).attr("style", startStyle);
+                                startClass = $("#"+(i-1)+"x"+(j-1)).attr("class");
+                                startStyle = $("#"+(i-1)+"x"+(j-1)).attr("style");
+                                $("#"+(i-1)+"x"+(j-1)).attr("class", ($("#"+(i+1)+"x"+(j-1))).attr("class"));
+                                $("#"+(i-1)+"x"+(j-1)).attr("style", ($("#"+(i+1)+"x"+(j-1))).attr("style"));
+                                $("#"+(i+1)+"x"+(j-1)).attr("class", ($("#"+(i+1)+"x"+(j+1))).attr("class"));
+                                $("#"+(i+1)+"x"+(j-1)).attr("style", ($("#"+(i+1)+"x"+(j+1))).attr("style"));
+                                $("#"+(i+1)+"x"+(j+1)).attr("class", ($("#"+(i-1)+"x"+(j+1))).attr("class"));
+                                $("#"+(i+1)+"x"+(j+1)).attr("style", ($("#"+(i-1)+"x"+(j+1))).attr("style"));
+                                $("#"+(i-1)+"x"+(j+1)).attr("class", startClass);
+                                $("#"+(i-1)+"x"+(j+1)).attr("style", startStyle);
+                                return;
+
+                        }
+                    }
+                }
+            }
+            function moveTileLeft(){
+                for(var i=1; i<23; i++){
+                    for(var j=1; j<11; j++){
+                        if($("#"+i+"x"+j).hasClass("tile")){
+                            if(j == 1 || $("#"+i+"x"+(j-1)).hasClass("set")){
+                                return;
+                            }
+                        }
+                    }
+                }
+                for(i=1; i<23; i++){
+                    for(j=1; j<11; j++){
+                       if($("#"+i+"x"+j).hasClass("tile") && $("#"+i+"x"+(j-1)).hasClass("block")){
+                                var curStyle = $("#"+i+"x"+j).attr("style");
+                                $("#"+i+"x"+(j-1)).attr("style", curStyle);
+                                $("#"+i+"x"+(j-1)).addClass( "tile" );
+                                $("#"+i+"x"+(j-1)).removeClass( "block" );
+                                $("#"+i+"x"+j).attr("style", "");
+                                $("#"+i+"x"+j).addClass( "block" );
+                                $("#"+i+"x"+j).removeClass( "tile" );
+                                if($("#"+i+"x"+j).hasClass("center")){
+                                    $("#"+i+"x"+j).removeClass("center");
+                                    $("#"+i+"x"+(j-1)).addClass("center");
+                                } 
+                        } 
+                    }
+                }
+            }
+            $("#downButton").unbind();
+            $("#rightButton").unbind();
+            $("#leftButton").unbind();
+            $("#turnTile").unbind();
+            $("#downButton").click(function(){
+                    moveTileDown();
+            });
+            $("#turnTile").click(function(){
+                flipTile();
+            });
+            $("#rightButton").click(function(){
+                moveTileRight();
+            })
+            $("#leftButton").click(function(){
+                moveTileLeft();
+            })
+            var timer = setInterval(function(){ moveTileDown() }, 1000);
+        }
+
+    });
+});
+
+
+
+
+        </script>
+    </body>
+</html>
