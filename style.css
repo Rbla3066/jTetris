@@ -20,8 +20,22 @@
 	border-style: dotted;
 	border-width: 1px;
 }
-#play-screen {
+#hidder {
+	width: 226px;
+	height: 44px;
+	background-color: gray;
 	z-index: 20;
+	top: -548px;
+	left: 287px;
+	border-style: solid;
+	border-color: black;
+	border-width: 0px;
+	border-top-width: 2px;
+	border-bottom-width: 3px;
+	position: relative;
+}
+#play-screen {
+	z-index: 1;
 	height: 484px;
 	border-style: solid;
 	border-width: 3px;
@@ -39,13 +53,15 @@
 	border-width: 1px;
 }
 #wrapper {
-	background-color: yellow;
+	background-color: gray;
 	border-style: solid;
 	border-width: 4px;
 	width: 800px;
 }
-.button {
-	font-size: 24px;
+.arrow {
+	height: 28px;
+	border-style: solid;
+	border-width: 2px;
 }
 #start {
 	font-size: 36px;
@@ -56,21 +72,32 @@
 #downButton {
 	position: relative;
 	top: -250px;
-	left: 395px;
+	left: 473px;
 }
 #leftButton {
 	position: relative;
 	top: -300px;
-	left: 500px;
+	left: 510px;
 }
 #rightButton {
 	position: relative;
 	top: -300px;
-	left: 500px;
+	left: 590px;
 }
 #turnTile {
 	position: relative;
-	top: -345px;
-	left: 585px;
+	top: -300px;
+	left: 629px;
+}
+#level-tally {
+	font-size: 24px;
+	margin: auto;
+	text-align: center;
+}
+
+#level-text {
+	font-size: 24px;
+	margin: auto;
+	text-align: center;
 }
 

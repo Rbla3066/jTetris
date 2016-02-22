@@ -10,12 +10,15 @@
     <div id="wrapper">
         <div id="play-screen">
         </div>
+        <div id="level" data-name="1000"></div>
+        <p id="level-text">Level: </p>
+        <div id="level-tally" data-name="10">1</div>
         <div id="hidder"></div>
         <button id="start" style="">Start</button>
-        <button id="turnTile" class="button" style="display: none">Flip</button>
-        <button id="leftButton" class="button" style="display: none">Left</button>
-        <button id="rightButton" class="button" style="display: none">Right</button>
-        <button id="downButton" class="button" style="display: none">Down</button>
+        <button id="turnTile" class="button" style="display: none"><img src="images/arrow_spin.png" class="arrow"></button>
+        <button id="leftButton" class="button" style="display: none"><img src="images/arrow_left.png" class="arrow"></button>
+        <button id="rightButton" class="button" style="display: none"><img src="images/arrow_right.png" class="arrow"></button>
+        <button id="downButton" class="button" style="display: none"><img src="images/arrow_down.png" class="arrow"></button>
         
     </div>
         <script type="text/javascript">
@@ -32,6 +35,13 @@ $( document ).ready(function() {
         $(".button").attr("style", "display: initial");
         makeTile();
         function makeTile() {
+            var newInterval = parseInt($("#level").attr("data-name"));
+            newInterval = (newInterval/1.01);
+            $("#level").attr("data-name", newInterval);
+            var newLevel = parseInt($("#level-tally").attr("data-name"));
+            $("#level-tally").attr("data-name", (newLevel+1));
+            var newText = Math.floor(newLevel/10);
+            $("#level-tally").text(newText);
           var shapes = {
             0 : {
                 color : "red",
@@ -109,8 +119,8 @@ $( document ).ready(function() {
                         }
                     }
                 }
-                if(winner){
-                        for(var i=22; i>0; i--){
+                function removeWinLine(){
+                    for(var i=22; i>0; i--){
                             if($("#"+i+"x1").hasClass("winLine")){
                                 for(var ii=i; ii>1; ii--){
                                     for(var j=1; j<11; j++){
@@ -123,13 +133,26 @@ $( document ).ready(function() {
                                         }
                                     }
                                 }
-                                for(var w=1; w<23; w++){
-                                    if($("#"+w+"x1").hasClass("winLine")){
-                                        lineCheck();
-                                    }
-                                }
                             }
-                        }
+                    }
+                }
+                if(winner){
+                removeWinLine();      
+                for(var w=1; w<23; w++){
+                    if($("#"+w+"x1").hasClass("winLine")){
+                         removeWinLine();
+                    }
+                }
+                for(var w=1; w<23; w++){
+                    if($("#"+w+"x1").hasClass("winLine")){
+                         removeWinLine();
+                    }
+                }
+                for(var w=1; w<23; w++){
+                    if($("#"+w+"x1").hasClass("winLine")){
+                         removeWinLine();
+                    }
+                }   
                 clearInterval(timer);
                 makeTile();
                 return;
@@ -343,11 +366,12 @@ $( document ).ready(function() {
             });
             $("#rightButton").click(function(){
                 moveTileRight();
-            })
+            });
             $("#leftButton").click(function(){
                 moveTileLeft();
-            })
-            var timer = setInterval(function(){ moveTileDown() }, 1000);
+            });
+            var timeInterval = parseInt($("#level").attr("data-name"));
+            var timer = setInterval(function(){ moveTileDown() }, timeInterval);
         }
 
     });
