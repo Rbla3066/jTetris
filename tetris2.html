@@ -14,8 +14,10 @@
         <div id="level" data-name="1000"></div>
         <div id="side-screen">
         <img src="images/titlephoto.png" id="title">
-        <p id="level-text">Level</p>
+        <p id="level-text">Level:</p>
         <div id="level-tally" data-name="10">1</div>
+        <p id="yourscore">Your Score</p>
+        <div id="score">0</div>
         </div>
         <div id="hidder"></div>
         <img src="images/start.jpg" id="start">
@@ -89,6 +91,7 @@ $( document ).ready(function() {
             }
         }
           var tileNum = Math.floor(Math.random() * 6);
+          $("#score").attr("style", "color:"+shapes[tileNum].color)
           var row = shapes[tileNum].first.length;
           var span = 10-row;
           var pos = Math.floor((Math.random() * span)+1);
@@ -110,6 +113,7 @@ $( document ).ready(function() {
           }
 
             function lineCheck(){
+                var lineNum = 0;
                 var winner = false;
                 for(var i=22; i>0; i--){
                     var winBool = true;
@@ -128,6 +132,7 @@ $( document ).ready(function() {
                     }
                 }
                 function removeWinLine(){
+                    lineNum++;
                     for(var i=22; i>0; i--){
                             if($("#"+i+"x1").hasClass("winLine")){
                                 for(var ii=i; ii>1; ii--){
@@ -162,12 +167,17 @@ $( document ).ready(function() {
                     }
                 }   
                 clearInterval(timer);
+                lineNum = lineNum * lineNum * lineNum * parseInt($("#level-tally").text()) * 10;
+                $("#score").text(parseInt($("#score").text())+lineNum);
                 makeTile();
                 return;
                 }
             makeTile();
             }
             function moveTileDown() {
+                var score = parseInt($("#score").text());
+                score += parseInt($("#level-tally").text());
+                $("#score").text(score);
                 for(var i=1; i<11; i++){
                     if($("#1x"+i).hasClass("set") || $("#2x"+i).hasClass("set")){
                         $("#play-screen").html("<h1>YOU LOSE!!</h1><br><a href='https://quiet-cliffs-17609.herokuapp.com/'>Play Again?</a>");
