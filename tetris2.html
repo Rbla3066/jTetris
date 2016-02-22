@@ -156,16 +156,7 @@ $( document ).ready(function() {
                          removeWinLine();
                     }
                 }
-                for(var w=1; w<23; w++){
-                    if($("#"+w+"x1").hasClass("winLine")){
-                         removeWinLine();
-                    }
-                }
-                for(var w=1; w<23; w++){
-                    if($("#"+w+"x1").hasClass("winLine")){
-                         removeWinLine();
-                    }
-                }   
+                  
                 clearInterval(timer);
                 lineNum = lineNum * lineNum * lineNum * parseInt($("#level-tally").text()) * 10;
                 $("#score").text(parseInt($("#score").text())+lineNum);
@@ -175,6 +166,7 @@ $( document ).ready(function() {
             makeTile();
             }
             function moveTileDown() {
+                var winLineOveride = false;
                 var score = parseInt($("#score").text());
                 score += parseInt($("#level-tally").text());
                 $("#score").text(score);
@@ -182,9 +174,12 @@ $( document ).ready(function() {
                     if($("#1x"+i).hasClass("set") || $("#2x"+i).hasClass("set")){
                         $("#play-screen").html("<h1>YOU LOSE!!</h1><br><a href='https://quiet-cliffs-17609.herokuapp.com/'>Play Again?</a>");
                         clearInterval(timer);
+                        clearInterval(timer);
+                        clearInterval(timer);
                         return;
                     }
                 }
+
                 for(i=22; i>0; i--){
                     for(var j=1; j<11; j++){
                         for(var k=1; k<11; k++){
@@ -202,6 +197,7 @@ $( document ).ready(function() {
                                         }
                                     }
                                 }
+                                if()
                                 clearInterval(timer);
                                 lineCheck();
                                 return

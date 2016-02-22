@@ -23,7 +23,7 @@
 	border-style: groove;
 	border-width: 4px;
 	border-color: #d7ceb2;
-	outline-color: gray;
+	outline-color: black;
 	top: -375px;
 	left: 30px;
 	height: 300px;
@@ -49,7 +49,7 @@
 	top: -494px;
 	left: 286px;
 	border-style: groove;
-	outline-color: gray;
+	outline-color: black;
 	border-bottom-color: #d7ceb2;
 	border-top-color: #d7ceb2;
 	border-width: 0px;
@@ -61,9 +61,8 @@
 	height: 484px;
 	text-align: center;
 	font-size: 30px;
-	color: #d7ceb2;
-	outline-color: #998639;
-	border-style: groove;
+	border-color: #d7ceb2;
+	outline-color: black;
 	border-width: 4px;
 	border-style: groove;
 	width: 220px;
@@ -95,7 +94,7 @@
 	border-top-width: 5px;
 	border-right-width: 5px;
 	border-left-width: 5px;
-	outline-color: #998639;
+	outline-color: black;
 	border-color: #d7ceb2;
 	width: 800px;
 	border-style: groove;
