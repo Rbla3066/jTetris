@@ -18,6 +18,7 @@
         <div id="level-tally" data-name="10">1</div>
         <p id="yourscore">Your Score</p>
         <div id="score">0</div>
+        <div id="song"><audio controls autoplay loop><source src="audio/tetris.mp3" type="audio/mp3"></audio></div>
         </div>
         <div id="hidder"></div>
         <img src="images/start.jpg" id="start">
@@ -28,6 +29,7 @@
         
     </div>
         <div id="footer">by: Robert Black</div>
+        <div id="audio"></div>
         </div>
         <script type="text/javascript">
 
@@ -38,6 +40,7 @@ $( document ).ready(function() {
              $("#play-screen").append("<div id='"+i+"x"+j+"' class='block' style=''></div>");
         }
     }
+
     $("#start").click(function() {
         var keySafety = 0;
         $("#start").attr("style", "display: none");
@@ -51,6 +54,10 @@ $( document ).ready(function() {
             var newLevel = parseInt($("#level-tally").attr("data-name"));
             $("#level-tally").attr("data-name", (newLevel+1));
             var newText = Math.floor(newLevel/10);
+            if(newText > parseInt($("#level-tally").text())){
+                $("#audio").html("<audio id='sound' autoplay><source src='audio/levelup.mp3' type='audio/mp3'></audio>");
+                $("#sound").prop("volume", 0.1);
+            }
             $("#level-tally").text(newText);
           var shapes = {
             0 : {
@@ -156,7 +163,8 @@ $( document ).ready(function() {
                          removeWinLine();
                     }
                 }
-                  
+                $("#audio").html("<audio id='sound' autoplay><source src='audio/bomb.mp3' type='audio/mp3'></audio>");
+                $("#sound").prop("volume", 0.2);
                 clearInterval(timer);
                 lineNum = lineNum * lineNum * lineNum * parseInt($("#level-tally").text()) * 10;
                 $("#score").text(parseInt($("#score").text())+lineNum);
@@ -166,17 +174,38 @@ $( document ).ready(function() {
             makeTile();
             }
             function moveTileDown() {
+            
                 var winLineOveride = false;
                 var score = parseInt($("#score").text());
                 score += parseInt($("#level-tally").text());
                 $("#score").text(score);
                 for(var i=1; i<11; i++){
                     if($("#1x"+i).hasClass("set") || $("#2x"+i).hasClass("set")){
-                        $("#play-screen").html("<h1>YOU LOSE!!</h1><br><a href='https://quiet-cliffs-17609.herokuapp.com/'>Play Again?</a>");
-                        clearInterval(timer);
-                        clearInterval(timer);
-                        clearInterval(timer);
-                        return;
+                        for(i=1; i<23; i++){
+                            for(j=1; j<11; j++){
+                                if($("#"+i+"x"+j).hasClass("set")){
+                                    $("#"+i+"x"+j).addClass("tile");
+                                    $("#"+i+"x"+j).removeClass("tile");
+                                }
+                                for(j=1; j<11; j++){
+                                $("#1x"+j).addClass("block");
+                                $("#1x"+j).removeClass("#2x"+j);
+                            }
+                                   
+                        }
+                    }
+                            for(i=0; i<999; i++){
+                                clearInterval(timer);
+                            }
+                            $("#song").html("<audio id='sound' autoplay><source src='audio/gameover.mp3' type='audio/mp3'></audio>");
+                            $("#sound").prop("volume", 0.4);
+                            $("#play-screen").html("<h1>YOU LOSE!!</h1><br><a href='https://quiet-cliffs-17609.herokuapp.com/'>Play Again?</a>");
+                            $("#score").attr("id", "scoreSet");
+                            $("#play-screen").append($("#yourscore"));
+                            $("#play-screen").append($("#scoreSet"));
+                            return;
+                            return;
+                            return;
                     }
                 }
 
@@ -197,6 +226,8 @@ $( document ).ready(function() {
                                         }
                                     }
                                 }
+                                $("#audio").html("<audio id='sound' autoplay><source src='audio/drop.mp3' type='audio/mp3'></audio>");
+                                 $("#sound").prop("volume", 0.1);
                                 clearInterval(timer);
                                 lineCheck();
                                 return
@@ -218,7 +249,9 @@ $( document ).ready(function() {
                                         }
                                     }
                                 }
-                                clearInterval(timer);
+                                $("#audio").html("<audio id='sound' autoplay><source src='audio/drop.mp3' type='audio/mp3'></audio>");
+                                $("#sound").prop("volume", 0.1);
+                            clearInterval(timer);    // to represent 'amurica' 
                                 lineCheck();
                                 return
                             }
@@ -239,6 +272,8 @@ $( document ).ready(function() {
                                         }
                                     }
                                 }
+                                $("#audio").html("<audio id='sound' autoplay><source src='audio/drop.mp3' type='audio/mp3'></audio>");
+                                $("#sound").prop("volume", 0.1);
                                 clearInterval(timer);
                                 lineCheck();
                                 return
@@ -382,21 +417,21 @@ $( document ).ready(function() {
                     moveTileDown();
             });
             if(keySafety==1){
-            $(window).keydown(function(e) {
-  switch (e.keyCode) {
-    case 37: moveTileLeft();
-        return;
-    case 38: flipTile();
-      e.preventDefault();
-      return;
-    case 39: moveTileRight();
-      return;
-    case 40: moveTileDown();
-      e.preventDefault();
-      return;
-  }
-});
-        }
+                $(window).keydown(function(e) {
+                    switch (e.keyCode) {
+                        case 37: moveTileLeft();
+                             return;
+                        case 38: flipTile();
+                             e.preventDefault();
+                            return;
+                        case 39: moveTileRight();
+                            return;
+                        case 40: moveTileDown();
+                             e.preventDefault();
+                           return;
+                    }
+                });
+            }
             $("#turnTile").click(function(){
                 flipTile();
             });
