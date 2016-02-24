@@ -26,6 +26,8 @@
         <img src="images/arrow_left.jpg" id="leftButton" class="button" style="display: none">
         <img src="images/arrow_right.jpg" id="rightButton" class="button"  style="display: none">
         <img src="images/arrow_down.jpg" id="downButton" class="button" style="display: none">
+        <button id="pause" class="pauser" style="display: none">Pause</button>
+        <button id="resume" class="pauser" data-name="false" style="display: none">Resume</button>
         
     </div>
         <div id="footer">by: Robert Black</div>
@@ -33,32 +35,64 @@
         </div>
         <script type="text/javascript">
 
-
+// this function creates the playing board for the blocks 
+// the top to rows are hidden by a div
 $( document ).ready(function() {
     for(var i=1; i<23; i++){
         for(var j=1; j<11; j++){
              $("#play-screen").append("<div id='"+i+"x"+j+"' class='block' style=''></div>");
         }
     }
+    // these next to functions are to pause and resume the game. 
+    // functions throughout the game check on the data-name of #resume before carrying out
+    // the buttons trigger the display of eachother on/off
+    $("#resume").click(function() {
+        $("#pause").attr("style", "display: initial");  // shows pause button
+        $("#resume").attr("style", "display: none");  // resume button goes away
+        $("#resume").attr("data-name", "false");       
+    });
+    $("#pause").click(function pause() {
+        $("#resume").attr("style", "display: initial");
+        $("#pause").attr("style", "display: none");
+        $("#resume").attr("data-name", "true");
+     });
 
+    //  this function triggers the start of the game 
     $("#start").click(function() {
-        var keySafety = 0;
-        $("#start").attr("style", "display: none");
-        $(".button").attr("style", "display: initial");
+        var keySafety = 0;              //  don't worry about this yet
+        $("#start").attr("style", "display: none");    // start button goes away
+        $(".button").attr("style", "display: initial");   // direction and pause buttons appear
+        $("#pause").attr("style", "display: initial");
         makeTile();
-        function makeTile() {
-            keySafety++;
+
+        // this function makes a randomly shaped 'tile' and places in the play board. 
+        // the rest of the game will remain under this function. 
+        function makeTile() {        
+            keySafety++;          //   still dont worry about this
+
+            //  increases the # of miiliseconds used for the main time interval
+            //  stored as attribute in #level
             var newInterval = parseInt($("#level").attr("data-name"));
             newInterval = (newInterval/1.01);
             $("#level").attr("data-name", newInterval);
+
+            // this tallies the number of tiles made
+            // then makes your current level based off that
             var newLevel = parseInt($("#level-tally").attr("data-name"));
             $("#level-tally").attr("data-name", (newLevel+1));
             var newText = Math.floor(newLevel/10);
+
+            // plays a sound if you have leveled up
             if(newText > parseInt($("#level-tally").text())){
                 $("#audio").html("<audio id='sound' autoplay><source src='audio/levelup.mp3' type='audio/mp3'></audio>");
                 $("#sound").prop("volume", 0.1);
             }
             $("#level-tally").text(newText);
+
+            // this object has all the data needed to create the shapes
+            // they are identified with numbers to be randomly chosen
+            // the arrays are 2D representations of them
+            // 1 represents a tile, 0 empty, and 2 is the center(you'll see why)
           var shapes = {
             0 : {
                 color : "red",
@@ -97,15 +131,20 @@ $( document ).ready(function() {
                 second : [1, 1, 0]
             }
         }
-          var tileNum = Math.floor(Math.random() * 6);
-          $("#score").attr("style", "color:"+shapes[tileNum].color)
-          var row = shapes[tileNum].first.length;
-          var span = 10-row;
-          var pos = Math.floor((Math.random() * span)+1);
+          var tileNum = Math.floor(Math.random() * 6);       // picks a random number 
+          $("#score").attr("style", "color:"+shapes[tileNum].color)   // this just makes your score the same color as the tile
+          var row = shapes[tileNum].first.length;     // this gets the length of the shape
+          var span = 10-row;   
+          // this picks a random x coordinate for the shape                   
+          var pos = Math.floor((Math.random() * span)+1);  
+
+          // this section creates the shape on the board based off the shape arrays
+          // then adds the color of it
           for(var i=0; i<row; i++){
             var col = shapes[tileNum].color;
             if(shapes[tileNum].first[i] == 1 || shapes[tileNum].first[i] == 2){
-                $("#1x"+(pos+i)).addClass( "tile" );
+                //  this distinguishes a 'tile'  from an empty block
+                $("#1x"+(pos+i)).addClass( "tile" ); 
                 $("#1x"+(pos+i)).removeClass( "block" );
                 $("#1x"+(pos+i)).attr("style", "background-image: url(images/"+col+".jpg)");
                 if(shapes[tileNum].first[i] == 2){
@@ -119,8 +158,11 @@ $( document ).ready(function() {
             }
           }
 
+
+            //  this function is called whenever a block hits a bottom. 
+            // it's purpose is to check if you've gotten a line of tiles
             function lineCheck(){
-                var lineNum = 0;
+                var lineNum = 0;    //  tracks number of lines scored
                 var winner = false;
                 for(var i=22; i>0; i--){
                     var winBool = true;
@@ -130,73 +172,57 @@ $( document ).ready(function() {
                         }
                     }
                     if(winBool){
+                        lineNum++;
                         winner=true;
                         for(var ii=1; ii<11; ii++){
-                            $("#"+i+"x"+ii).addClass("winLine");
-                            $("#"+i+"x"+ii).removeClass("set");
-                            $("#"+i+"x"+ii).attr("style", "background-color: gray");
+                            $("#"+i+"x"+ii).addClass("winLine");   // gives them a seperate class
+                            $("#"+i+"x"+ii).removeClass("set");     
+                            $("#"+i+"x"+ii).attr("style", "background-color: gray");  // makes them grey
                         }
                     }
                 }
-                function removeWinLine(){
-                    lineNum++;
-                    for(var i=22; i>0; i--){
-                            if($("#"+i+"x1").hasClass("winLine")){
-                                for(var ii=i; ii>1; ii--){
-                                    for(var j=1; j<11; j++){
-                                        $("#"+ii+"x"+j).removeClass("center");
-                                        $("#"+ii+"x"+j).attr("class", $("#"+(ii-1)+"x"+j).attr("class"));
-                                        $("#"+ii+"x"+j).attr("style", $("#"+(ii-1)+"x"+j).attr("style"));
-                                        if($("#"+ii+"x"+j).hasClass("tile")){
-                                            $("#"+ii+"x"+j).addClass("set");
-                                            $("#"+ii+"x"+j).removeClass("tile");
-                                        }
-                                    }
-                                }
-                            }
-                    }
-                }
+                //  plays a sound if you've completed a line and adds a nice score to your points
                 if(winner){
-                removeWinLine();      
-                for(var w=1; w<23; w++){
-                    if($("#"+w+"x1").hasClass("winLine")){
-                         removeWinLine();
+                    $("#audio").html("<audio id='sound' autoplay><source src='audio/bomb.mp3' type='audio/mp3'></audio>");
+                    $("#sound").prop("volume", 0.3);
+                    lineNum = lineNum * lineNum * lineNum * parseInt($("#level-tally").text()) * 10;
+                    $("#score").text(parseInt($("#score").text())+lineNum);     
+                }
+                makeTile();      //  back to makin tiles
+            }
+
+            // this function is called before moving tiles down. 
+            // the purpose is to avoid glitches with the gray tiles
+            // this'll maybe make sense later
+            function removeGray(b){
+                for(var i=b; i>1; i--){
+                    for(var j=1; j<11; j++){
+                        replaceBlock(i, j, (i-1), j);
                     }
                 }
-                $("#audio").html("<audio id='sound' autoplay><source src='audio/bomb.mp3' type='audio/mp3'></audio>");
-                $("#sound").prop("volume", 0.2);
-                clearInterval(timer);
-                lineNum = lineNum * lineNum * lineNum * parseInt($("#level-tally").text()) * 10;
-                $("#score").text(parseInt($("#score").text())+lineNum);
-                makeTile();
-                return;
+                for(j=1; j<11; j++){
+                    $("#1x"+j).attr("class", "block");
+                    $("#1x"+j).attr("style", "");
                 }
-            makeTile();
             }
+
+
+            // this function is called upon every interval and down key
             function moveTileDown() {
-            
-                var winLineOveride = false;
-                var score = parseInt($("#score").text());
+                if ($("#resume").attr("data-name")=="true"){    // pause check
+                    return;
+                }
+                var score = parseInt($("#score").text());     // adds points based on your level
                 score += parseInt($("#level-tally").text());
                 $("#score").text(score);
+
+                // before we start moving things down we need to check for a few things
+                // this part checks if you have losed the game 
+                //  by whether there are 'set' blocks in the top two rows(undisplayed rows)
                 for(var i=1; i<11; i++){
                     if($("#1x"+i).hasClass("set") || $("#2x"+i).hasClass("set")){
-                        for(i=1; i<23; i++){
-                            for(j=1; j<11; j++){
-                                if($("#"+i+"x"+j).hasClass("set")){
-                                    $("#"+i+"x"+j).addClass("tile");
-                                    $("#"+i+"x"+j).removeClass("tile");
-                                }
-                                for(j=1; j<11; j++){
-                                $("#1x"+j).addClass("block");
-                                $("#1x"+j).removeClass("#2x"+j);
-                            }
-                                   
-                        }
-                    }
-                            for(i=0; i<999; i++){
-                                clearInterval(timer);
-                            }
+                            // then plays a tune and puts away the play screen 
+                            // displays your total score and shows a link to play again(refresh browser)
                             $("#song").html("<audio id='sound' autoplay><source src='audio/gameover.mp3' type='audio/mp3'></audio>");
                             $("#sound").prop("volume", 0.4);
                             $("#play-screen").html("<h1>YOU LOSE!!</h1><br><a href='https://quiet-cliffs-17609.herokuapp.com/'>Play Again?</a>");
@@ -204,108 +230,80 @@ $( document ).ready(function() {
                             $("#play-screen").append($("#yourscore"));
                             $("#play-screen").append($("#scoreSet"));
                             return;
-                            return;
-                            return;
                     }
                 }
-
-                for(i=22; i>0; i--){
-                    for(var j=1; j<11; j++){
-                        for(var k=1; k<11; k++){
-                         if($("#"+i+"x"+k).hasClass("tile")){
-                            if(i+1 == 23 || $("#"+(i+1)+"x"+k).hasClass("set")){
-                                for(var t=22; t>0; t--){
-                                    for(var p=1; p<11; p++){
-                                        if($("#"+t+"x"+p).hasClass("tile")){
-                                            $("#"+t+"x"+p).addClass( "set" );
-                                            $("#"+t+"x"+p).removeClass( "tile" );
-                                            $("#"+t+"x"+p).removeClass( "block" );
-                                            if($("#"+t+"x"+p).hasClass("center")){
-                                                $("#"+t+"x"+p).removeClass("center");
-                                            } 
-                                        }
-                                    }
-                                }
-                                $("#audio").html("<audio id='sound' autoplay><source src='audio/drop.mp3' type='audio/mp3'></audio>");
-                                 $("#sound").prop("volume", 0.1);
-                                clearInterval(timer);
-                                lineCheck();
-                                return
-                            }
-                          }
-                        }
-                        for(var kk=1; kk<11; kk++){
-                         if($("#"+(i-1)+"x"+kk).hasClass("tile")){
-                            if($("#"+i+"x"+kk).hasClass("set")){
-                                for(var tt=22; tt>0; tt--){
-                                    for(var pp=1; pp<11; pp++){
-                                        if($("#"+tt+"x"+pp).hasClass("tile")){
-                                            $("#"+tt+"x"+pp).addClass( "set" );
-                                            $("#"+tt+"x"+pp).removeClass( "tile" );
-                                            $("#"+tt+"x"+pp).removeClass( "block" );
-                                            if($("#"+tt+"x"+pp).hasClass("center")){
-                                                $("#"+tt+"x"+pp).removeClass("center");
-                                            } 
-                                        }
-                                    }
-                                }
-                                $("#audio").html("<audio id='sound' autoplay><source src='audio/drop.mp3' type='audio/mp3'></audio>");
-                                $("#sound").prop("volume", 0.1);
-                            clearInterval(timer);    // to represent 'amurica' 
-                                lineCheck();
-                                return
-                            }
-                          }
-                        }
-                        for(kk=1; kk<11; kk++){
-                         if($("#"+(i-2)+"x"+kk).hasClass("tile")){
-                            if($("#"+(i-1)+"x"+kk).hasClass("set")){
-                                for(var tt=22; tt>0; tt--){
-                                    for(var pp=1; pp<11; pp++){
-                                        if($("#"+tt+"x"+pp).hasClass("tile")){
-                                            $("#"+tt+"x"+pp).addClass( "set" );
-                                            $("#"+tt+"x"+pp).removeClass( "tile" );
-                                            $("#"+tt+"x"+pp).removeClass( "block" );
-                                            if($("#"+tt+"x"+pp).hasClass("center")){
-                                                $("#"+tt+"x"+pp).removeClass("center");
-                                            } 
-                                        }
-                                    }
-                                }
-                                $("#audio").html("<audio id='sound' autoplay><source src='audio/drop.mp3' type='audio/mp3'></audio>");
-                                $("#sound").prop("volume", 0.1);
-                                clearInterval(timer);
-                                lineCheck();
-                                return
-                            }
-                          }
-                        }
-                        if($("#"+i+"x"+j).hasClass("tile") && $("#"+(i+1)+"x"+j).hasClass("block")){
-                                var curStyle = $("#"+i+"x"+j).attr("style");
-                                $("#"+(i+1)+"x"+j).attr("style", curStyle);
-                                $("#"+(i+1)+"x"+j).addClass( "tile" );
-                                $("#"+(i+1)+"x"+j).removeClass( "block" );
-                                $("#"+i+"x"+j).attr("style", "");
-                                $("#"+i+"x"+j).addClass( "block" );
-                                $("#"+i+"x"+j).removeClass( "tile" );
-                                if($("#"+i+"x"+j).hasClass("center")){
-                                    $("#"+i+"x"+j).removeClass("center");
-                                    $("#"+(i+1)+"x"+j).addClass("center");
-                                } 
-                        }
+                //  this checks for a grayline and sends you to the remove gray function
+                // this is because set tiles above the gray lines are back to moving 'tiles' 
+                // take a look at the next section and come back
+                //  without this all the 'tiles' will hit the bottom and than the makeTile function is called ten times! not good
+                for(var b=22; b>2; b--){
+                    if($("#"+b+"x1").hasClass("winLine")){
+                        removeGray(b);
+                        return;
                     }
                 }
-            }
-            function moveTileRight(){
-                for(var i=1; i<23; i++){
-                    for(var j=1; j<11; j++){
-                        if($("#"+i+"x"+j).hasClass("tile")){
-                            if(j == 10 || $("#"+i+"x"+(j+1)).hasClass("set")){
+                //  these next few for loops check if a 'tile'(moving) is over a 'set' tile or the bottom of the board
+                //  if so it sets all tiles (setTile function) which triggers the maketile function
+                for(i=1; i<23; i++){
+                    if(i==22){
+                        for(var h=1; h<11; h++){
+                            if($("#22x"+h).hasClass("tile")){
+                                setTiles();
                                 return;
                             }
                         }
                     }
+                    for(var j=1; j<11; j++){
+                        if($("#"+i+"x"+j).hasClass("tile")&&$("#"+(i+1)+"x"+j).hasClass("set")){
+                            setTiles();
+                            return;
+                        }
+                    }
                 }
+                // this functions changes all the moving tiles to 'set' tiles
+                function setTiles(){
+                    for(var ii=1; ii<23; ii++){
+                        for(var jj=1; jj<11; jj++){
+                            if($("#"+ii+"x"+jj).hasClass("tile")){
+                                $("#"+ii+"x"+jj).addClass("set");
+                                $("#"+ii+"x"+jj).removeClass("tile");
+                                $("#"+ii+"x"+jj).removeClass("center");
+                            }
+                        }
+                    }  // and plays a sound which is heard when a tile touches base
+                    $("#audio").html("<audio id='sound' autoplay><source src='audio/drop.mp3' type='audio/mp3'></audio>");
+                    $("#sound").prop("volume", 0.2);
+                    lineCheck();
+                }
+
+                // if all is well, the move tile down function does just that --->
+                for(i=21; i>0; i--){
+                    for(j=1; j<11; j++){
+                        // this checks for the spaces where a tile is above an empty block and 'moves' it
+                        if($("#"+i+"x"+j).hasClass("tile")&&$("#"+(i+1)+"x"+j).hasClass("block")){   
+                            replaceBlock((i+1), j, i, j);
+                            $("#"+i+"x"+j).addClass("block");
+                            $("#"+i+"x"+j).removeClass("tile");
+                            $("#"+i+"x"+j).removeClass("center");
+                            $("#"+i+"x"+j).attr("style", "");
+                        }
+                    }
+                }
+            }
+            // attached to the right keys, this function moves the 'tiles'
+            function moveTileRight(){
+                // first make sure there is room to do so
+                for(var i=1; i<23; i++){
+                    for(var j=1; j<11; j++){
+                        if($("#"+i+"x"+j).hasClass("tile")){
+                            if(j == 10 || $("#"+i+"x"+(j+1)).hasClass("set")){
+                                return;   // return if there isnt room
+                            }
+                        }
+                    }
+                }
+                // moves the 'tile' right. you should be noticing that nothing ACTUALLY moves
+                // they only disapear and reappear elsewhere
                 for(i=1; i<23; i++){
                     for(j=10; j>0; j--){
                        if($("#"+i+"x"+j).hasClass("tile") && $("#"+i+"x"+(j+1)).hasClass("block")){
@@ -324,11 +322,49 @@ $( document ).ready(function() {
                     }
                 }
             }
-            function flipTile(){
-                function replaceBlock(a, b, c, d){
-                    $("#"+a+"x"+b).attr("class", ($("#"+c+"x"+d)).attr("class"));
-                    $("#"+a+"x"+b).attr("style", ($("#"+c+"x"+d)).attr("style"));
+            // essentially the same as move right function
+            function moveTileLeft(){
+                for(var i=1; i<23; i++){
+                    for(var j=1; j<11; j++){
+                        if($("#"+i+"x"+j).hasClass("tile")){
+                            if(j == 1 || $("#"+i+"x"+(j-1)).hasClass("set")){
+                                return;
+                            }
+                        }
+                    }
                 }
+                for(i=1; i<23; i++){
+                    for(j=1; j<11; j++){
+                       if($("#"+i+"x"+j).hasClass("tile") && $("#"+i+"x"+(j-1)).hasClass("block")){
+                                var curStyle = $("#"+i+"x"+j).attr("style");
+                                $("#"+i+"x"+(j-1)).attr("style", curStyle);
+                                $("#"+i+"x"+(j-1)).addClass( "tile" );
+                                $("#"+i+"x"+(j-1)).removeClass( "block" );
+                                $("#"+i+"x"+j).attr("style", "");
+                                $("#"+i+"x"+j).addClass( "block" );
+                                $("#"+i+"x"+j).removeClass( "tile" );
+                                if($("#"+i+"x"+j).hasClass("center")){
+                                    $("#"+i+"x"+j).removeClass("center");
+                                    $("#"+i+"x"+(j-1)).addClass("center");
+                                } 
+                        } 
+                    }
+                }
+            }
+            // this function is made to make the next one easier to go through
+            //  it takes all the qualities of a block at x, y  and gives it to another at x2, y2
+            function replaceBlock(a, b, c, d){
+                $("#"+a+"x"+b).attr("class", ($("#"+c+"x"+d)).attr("class"));
+                $("#"+a+"x"+b).attr("style", ($("#"+c+"x"+d)).attr("style"));
+                if($("#"+c+"x"+d).hasClass("center")){
+                    $("#"+a+"x"+b).addClass("center");
+                }
+            }
+            //  I am not going to explain this one much, but this flips the 'tiles'
+            //  this was by far hardest aspect of the game to code
+            //  if you can understand whats happening, that's awesome!
+            //  I would love to hear of another approach if you think you have one!
+            function flipTile(){
                 for(var i=1; i<23; i++){
                     for(var j=1; j<11; j++){
                         if($("#"+i+"x"+j).hasClass("center")){
@@ -381,71 +417,76 @@ $( document ).ready(function() {
                     }
                 }
             }
-            function moveTileLeft(){
-                for(var i=1; i<23; i++){
-                    for(var j=1; j<11; j++){
-                        if($("#"+i+"x"+j).hasClass("tile")){
-                            if(j == 1 || $("#"+i+"x"+(j-1)).hasClass("set")){
-                                return;
-                            }
-                        }
-                    }
-                }
-                for(i=1; i<23; i++){
-                    for(j=1; j<11; j++){
-                       if($("#"+i+"x"+j).hasClass("tile") && $("#"+i+"x"+(j-1)).hasClass("block")){
-                                var curStyle = $("#"+i+"x"+j).attr("style");
-                                $("#"+i+"x"+(j-1)).attr("style", curStyle);
-                                $("#"+i+"x"+(j-1)).addClass( "tile" );
-                                $("#"+i+"x"+(j-1)).removeClass( "block" );
-                                $("#"+i+"x"+j).attr("style", "");
-                                $("#"+i+"x"+j).addClass( "block" );
-                                $("#"+i+"x"+j).removeClass( "tile" );
-                                if($("#"+i+"x"+j).hasClass("center")){
-                                    $("#"+i+"x"+j).removeClass("center");
-                                    $("#"+i+"x"+(j-1)).addClass("center");
-                                } 
-                        } 
-                    }
-                }
-            }
-            $("#downButton").unbind();
-            $("#rightButton").unbind();
-            $("#leftButton").unbind();
-            $("#turnTile").unbind();
-            $("#downButton").click(function(){
-                    moveTileDown();
-            });
-            if(keySafety==1){
-                $(window).keydown(function(e) {
-                    switch (e.keyCode) {
-                        case 37: moveTileLeft();
-                             return;
-                        case 38: flipTile();
-                             e.preventDefault();
-                            return;
-                        case 39: moveTileRight();
-                            return;
-                        case 40: moveTileDown();
-                             e.preventDefault();
+                //  this unbinds the key events 
+                // this is done because everytime we get down a lil further, they are given the event trigger
+                //  this  can cause the buttons to trigger the event function multiple times
+                // if your wondering why its set up like this in the first place, i found 
+                // it was essential to keeping the game flow continuous and to avoid
+                // triggering of multiple events at the same time, crashing the system
+                $("#downButton").unbind();
+                $("#rightButton").unbind();
+                $("#leftButton").unbind();
+                $("#turnTile").unbind();
+                $("#downButton").click(function(){
+                    if ($("#resume").attr("data-name")=="true"){   // pause check
                            return;
-                    }
+                        }
+                        moveTileDown();
                 });
-            }
-            $("#turnTile").click(function(){
-                flipTile();
-            });
-            $("#rightButton").click(function(){
-                moveTileRight();
-            });
-            $("#leftButton").click(function(){
-                moveTileLeft();
-            });
-            for (var i = 1; i < 999; i++) {
-    window.clearInterval(i);
-}
-            var timeInterval = parseInt($("#level").attr("data-name"));
-            var timer = setInterval(function(){ moveTileDown() }, timeInterval);
+                //these match the on screen buttons with the appropriate function
+                $("#turnTile").click(function(){
+                    if ($("#resume").attr("data-name")=="true"){
+                           return;
+                        }
+                    flipTile();
+                });
+                $("#rightButton").click(function(){
+                    if ($("#resume").attr("data-name")=="true"){
+                           return;
+                        }
+                    moveTileRight();
+                });
+                $("#leftButton").click(function(){
+                    if ($("#resume").attr("data-name")=="true"){
+                           return;
+                        }
+                    moveTileLeft();
+                });
+
+                // these are the keyboard keys attached to functions
+                if(keySafety==1){      //  remember that thing i said not to worry about? this prevents double event triggering
+                    $(window).keydown(function(e) {   
+                        if ($("#resume").attr("data-name")=="true"){  // pause check
+                           return;
+                        }
+                        switch (e.keyCode) {
+                            case 37: moveTileLeft();
+                                 return;
+                            case 38: flipTile();
+                                 e.preventDefault();
+                                return;
+                            case 39: moveTileRight();
+                                return;
+                            case 40: moveTileDown();
+                                 e.preventDefault();
+                               return;
+                        }
+                    });
+                }
+
+                //  and finally we get here
+                //  notice at the bottom we have the interval to move tiles down
+                // the scope will turn to this section everytime a tile is made(yes we are still in the make tile function)
+                // this causes multiple intervals to be made.
+                //  so this next part is a rather ambiguous way of clearing any possible interval(they can really add up..trust me)
+                // and then a new interval is made based on the number calculated before in data-name
+                // hope that helped explain. thanks for playing!
+                for (var i = 1; i < 999; i++) {
+                window.clearInterval(i);
+                }
+                var timeInterval = parseInt($("#level").attr("data-name"));
+                var timer = setInterval(function(){ moveTileDown() }, timeInterval);
+           
         }
 
     });

@@ -204,6 +204,14 @@ audio {width: 195px}
 	text-align: center;
 	clear: both;
 }
+.pauser {
+	position: relative;
+	background-color: black;
+	font: 20px 'BazarMedium';
+	color: #d7ceb2;
+	top: -400px;
+	left: 120px;
+}
 
 
 
