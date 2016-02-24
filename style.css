@@ -242,7 +242,7 @@ audio {width: 195px}
 @-webkit-viewport {
   orientation: landscape;
 }
-@media screen and (max-width: 600px) and (orientation: landscape) {
+@media screen and (max-width: 780px) {
 	#song {
 		display: none;
 	}
@@ -253,7 +253,7 @@ audio {width: 195px}
 		padding-bottom:0px;
 	}
 }
-@media screen and (max-width: 480px) and (orientation: landscape) {
+@media screen and (max-width: 480px) {
 	#song {
 		display: none;
 	}
