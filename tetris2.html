@@ -147,6 +147,7 @@ $( document ).ready(function() {
                 $("#1x"+(pos+i)).addClass( "tile" ); 
                 $("#1x"+(pos+i)).removeClass( "block" );
                 $("#1x"+(pos+i)).attr("style", "background-image: url(images/"+col+".jpg)");
+                //distinguishes center of shape used to flip the tiles later
                 if(shapes[tileNum].first[i] == 2){
                    $("#1x"+(pos+i)).addClass( "center" );
                 }
@@ -157,40 +158,6 @@ $( document ).ready(function() {
                 $("#2x"+(pos+i)).attr("style", "background-image: url(images/"+col+".jpg)");
             }
           }
-
-
-            //  this function is called whenever a block hits a bottom. 
-            // it's purpose is to check if you've gotten a line of tiles
-            function lineCheck(){
-                var lineNum = 0;    //  tracks number of lines scored
-                var winner = false;
-                for(var i=22; i>0; i--){
-                    var winBool = true;
-                    for(var j=1; j<11; j++){
-                        if($("#"+i+"x"+j).hasClass("block")){
-                            winBool = false;
-                        }
-                    }
-                    if(winBool){
-                        lineNum++;
-                        winner=true;
-                        for(var ii=1; ii<11; ii++){
-                            $("#"+i+"x"+ii).addClass("winLine");   // gives them a seperate class
-                            $("#"+i+"x"+ii).removeClass("set");     
-                            $("#"+i+"x"+ii).attr("style", "background-color: gray");  // makes them grey
-                        }
-                    }
-                }
-                //  plays a sound if you've completed a line and adds a nice score to your points
-                if(winner){
-                    $("#audio").html("<audio id='sound' autoplay><source src='audio/bomb.mp3' type='audio/mp3'></audio>");
-                    $("#sound").prop("volume", 0.3);
-                    lineNum = lineNum * lineNum * lineNum * parseInt($("#level-tally").text()) * 10;
-                    $("#score").text(parseInt($("#score").text())+lineNum);     
-                }
-                makeTile();      //  back to makin tiles
-            }
-
             // this function is called before moving tiles down. 
             // the purpose is to avoid glitches with the gray tiles
             // this'll maybe make sense later
@@ -233,7 +200,7 @@ $( document ).ready(function() {
                     }
                 }
                 //  this checks for a grayline and sends you to the remove gray function
-                // this is because set tiles above the gray lines are back to moving 'tiles' 
+                // this is because set tiles above the gray lines are set back to moving 'tiles' 
                 // take a look at the next section and come back
                 //  without this all the 'tiles' will hit the bottom and than the makeTile function is called ten times! not good
                 for(var b=22; b>2; b--){
@@ -290,6 +257,7 @@ $( document ).ready(function() {
                     }
                 }
             }
+
             // attached to the right keys, this function moves the 'tiles'
             function moveTileRight(){
                 // first make sure there is room to do so
@@ -350,6 +318,37 @@ $( document ).ready(function() {
                         } 
                     }
                 }
+            }
+            //  this function is called whenever a block hits a bottom. 
+            // it's purpose is to check if you've gotten a line of tiles
+            function lineCheck(){
+                var lineNum = 0;    //  tracks number of lines scored
+                var winner = false;
+                for(var i=22; i>0; i--){
+                    var winBool = true;
+                    for(var j=1; j<11; j++){
+                        if($("#"+i+"x"+j).hasClass("block")){
+                            winBool = false;
+                        }
+                    }
+                    if(winBool){
+                        lineNum++;
+                        winner=true;
+                        for(var ii=1; ii<11; ii++){
+                            $("#"+i+"x"+ii).addClass("winLine");   // gives them a seperate class
+                            $("#"+i+"x"+ii).removeClass("set");     
+                            $("#"+i+"x"+ii).attr("style", "background-color: gray");  // makes them grey
+                        }
+                    }
+                }
+                //  plays a sound if you've completed a line and adds a nice score to your points
+                if(winner){
+                    $("#audio").html("<audio id='sound' autoplay><source src='audio/bomb.mp3' type='audio/mp3'></audio>");
+                    $("#sound").prop("volume", 0.3);
+                    lineNum = lineNum * lineNum * lineNum * parseInt($("#level-tally").text()) * 10;
+                    $("#score").text(parseInt($("#score").text())+lineNum);     
+                }
+                makeTile();      //  back to makin tiles
             }
             // this function is made to make the next one easier to go through
             //  it takes all the qualities of a block at x, y  and gives it to another at x2, y2
