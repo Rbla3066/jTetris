@@ -37,6 +37,7 @@
 
 // this function creates the playing board for the blocks 
 // the top to rows are hidden by a div
+// each div is given an id relavant to its x, y coordinates 
 $( document ).ready(function() {
     for(var i=1; i<23; i++){
         for(var j=1; j<11; j++){
@@ -71,7 +72,7 @@ $( document ).ready(function() {
             keySafety++;          //   still dont worry about this
 
             //  increases the # of miiliseconds used for the main time interval
-            //  stored as attribute in #level
+            //  stored as an attribute in #level for easy jquery access
             var newInterval = parseInt($("#level").attr("data-name"));
             newInterval = (newInterval/1.01);
             $("#level").attr("data-name", newInterval);
