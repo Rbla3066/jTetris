@@ -212,6 +212,17 @@ audio {width: 195px}
 	top: -400px;
 	left: 120px;
 }
-
+@viewport {
+  min-width: 640px;
+  max-width: 800px;
+}
+@viewport {
+  zoom: 1.0;
+  min-zoom: 1.0;
+  max-zoom: 1.0;
+}
+@viewport {
+  orientation: landscape;
+}
 
 
