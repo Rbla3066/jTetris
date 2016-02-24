@@ -45,7 +45,7 @@ $( document ).ready(function() {
         }
     }
     // these next to functions are to pause and resume the game. 
-    // functions throughout the game check on the data-name of #resume before carrying out
+    // functions throughout the game check the data-name of #resume before doing anything
     // the buttons trigger the display of eachother on/off
     $("#resume").click(function() {
         $("#pause").attr("style", "display: initial");  // shows pause button
@@ -82,11 +82,18 @@ $( document ).ready(function() {
             var newLevel = parseInt($("#level-tally").attr("data-name"));
             $("#level-tally").attr("data-name", (newLevel+1));
             var newText = Math.floor(newLevel/10);
+            var timeInterval = parseInt($("#level").attr("data-name"));
 
-            // plays a sound if you have leveled up
+            // plays a sound if you have leveled up and makes new time interval
             if(newText > parseInt($("#level-tally").text())){
                 $("#audio").html("<audio id='sound' autoplay><source src='audio/levelup.mp3' type='audio/mp3'></audio>");
                 $("#sound").prop("volume", 0.1);
+                // this rather ambiguous loop assures there are no loops before making a new one. 
+                // they really add up fast otherwise. Cant seem to figure out why
+                for(var i=0; i<999; i++){
+                clearInterval(i);
+                }
+                var timerTwo = setInterval(function(){ moveTileDown() }, timeInterval);
             }
             $("#level-tally").text(newText);
 
@@ -97,37 +104,31 @@ $( document ).ready(function() {
           var shapes = {
             0 : {
                 color : "red",
-                name : "square",
                 first : [1, 1],
                 second : [1, 1]
             },
             1 : {
                 color : "orange",
-                name : "line",
                 first : [1, 1, 2, 1],
                 second : [0, 0, 0, 0]
             },
             2 : {
                 color : "yellow",
-                name : "tee",
                 first : [1, 2, 1],
                 second : [0, 1, 0]
             },
             3 : {
                 color : "blue",
-                name : "ell",
                 first : [1, 2, 1],
                 second : [0, 0, 1]
             },
             4 : {
                 color : "green",
-                name : "zeeOne",
                 first : [1, 2, 0],
                 second : [0, 1, 1]
             },
             5 : {
                 color : "teal",
-                name : "zeeTwo",
                 first : [0, 2, 1],
                 second : [1, 1, 0]
             }
@@ -160,17 +161,17 @@ $( document ).ready(function() {
             }
           }
             // this function is called before moving tiles down. 
-            // the purpose is to avoid glitches with the gray tiles
-            // this'll maybe make sense later
+            // this brings down all lines before the gray lines(complete lines)
             function removeGray(b){
                 for(var i=b; i>1; i--){
                     for(var j=1; j<11; j++){
-                        replaceBlock(i, j, (i-1), j);
+                        switchB(i, j, (i-1), j);
                     }
                 }
                 for(j=1; j<11; j++){
                     $("#1x"+j).attr("class", "block");
                     $("#1x"+j).attr("style", "");
+                    $("#1x"+j).removeClass("center");
                 }
             }
 
@@ -185,7 +186,7 @@ $( document ).ready(function() {
                 $("#score").text(score);
 
                 // before we start moving things down we need to check for a few things
-                // this part checks if you have losed the game 
+                // this part checks if you have lost the game 
                 //  by whether there are 'set' blocks in the top two rows(undisplayed rows)
                 for(var i=1; i<11; i++){
                     if($("#1x"+i).hasClass("set") || $("#2x"+i).hasClass("set")){
@@ -201,17 +202,14 @@ $( document ).ready(function() {
                     }
                 }
                 //  this checks for a grayline and sends you to the remove gray function
-                // this is because set tiles above the gray lines are set back to moving 'tiles' 
-                // take a look at the next section and come back
-                //  without this all the 'tiles' will hit the bottom and than the makeTile function is called ten times! not good
                 for(var b=22; b>2; b--){
                     if($("#"+b+"x1").hasClass("winLine")){
                         removeGray(b);
                         return;
                     }
                 }
-                //  these next few for loops check if a 'tile'(moving) is over a 'set' tile or the bottom of the board
-                //  if so it sets all tiles (setTile function) which triggers the maketile function
+                //  these next few for-loops check if a 'tile'(moving) is over a 'set' tile or the bottom of the board
+                //  if so it sets all tiles (setTile function) which in turn triggers the maketile function
                 for(i=1; i<23; i++){
                     if(i==22){
                         for(var h=1; h<11; h++){
@@ -249,14 +247,27 @@ $( document ).ready(function() {
                     for(j=1; j<11; j++){
                         // this checks for the spaces where a tile is above an empty block and 'moves' it
                         if($("#"+i+"x"+j).hasClass("tile")&&$("#"+(i+1)+"x"+j).hasClass("block")){   
-                            replaceBlock((i+1), j, i, j);
-                            $("#"+i+"x"+j).addClass("block");
-                            $("#"+i+"x"+j).removeClass("tile");
-                            $("#"+i+"x"+j).removeClass("center");
-                            $("#"+i+"x"+j).attr("style", "");
+                            switchB((i+1), j, i, j);
                         }
                     }
                 }
+            }
+            // this function is made to  save on repitition
+            //  it takes all the qualities of a block at x, y  and switches it with x2, y2
+            function switchB(a, b, c, d){
+                var type = $("#"+a+"x"+b).attr("class");
+                var style = $("#"+a+"x"+b).attr("style");
+                $("#"+a+"x"+b).attr("class", $("#"+c+"x"+d).attr("class"));
+                $("#"+a+"x"+b).attr("style", $("#"+c+"x"+d).attr("style"));
+                if($("#"+c+"x"+d).hasClass("center")){
+                    $("#"+a+"x"+b).addClass("center");
+                    $("#"+c+"x"+d).removeClass("center");
+                } else if ($("#"+a+"x"+b).hasClass("center")){
+                    $("#"+c+"x"+d).addClass("center");
+                    $("#"+a+"x"+b).removeClass("center");
+                }
+                $("#"+c+"x"+d).attr("class", type);
+                $("#"+c+"x"+d).attr("style", style);
             }
 
             // attached to the right keys, this function moves the 'tiles'
@@ -271,22 +282,12 @@ $( document ).ready(function() {
                         }
                     }
                 }
-                // moves the 'tile' right. you should be noticing that nothing ACTUALLY moves
+                // moves the 'tile' right. you may have noticed that nothing ACTUALLY moves
                 // they only disapear and reappear elsewhere
                 for(i=1; i<23; i++){
                     for(j=10; j>0; j--){
                        if($("#"+i+"x"+j).hasClass("tile") && $("#"+i+"x"+(j+1)).hasClass("block")){
-                                var curStyle = $("#"+i+"x"+j).attr("style");
-                                $("#"+i+"x"+(j+1)).attr("style", curStyle);
-                                $("#"+i+"x"+(j+1)).addClass( "tile" );
-                                $("#"+i+"x"+(j+1)).removeClass( "block" );
-                                $("#"+i+"x"+j).attr("style", "");
-                                $("#"+i+"x"+j).addClass( "block" );
-                                $("#"+i+"x"+j).removeClass( "tile" );
-                                if($("#"+i+"x"+j).hasClass("center")){
-                                    $("#"+i+"x"+j).removeClass("center");
-                                    $("#"+i+"x"+(j+1)).addClass("center");
-                                } 
+                                switchB(i, j, i, (j+1));
                         } 
                     }
                 }
@@ -305,17 +306,7 @@ $( document ).ready(function() {
                 for(i=1; i<23; i++){
                     for(j=1; j<11; j++){
                        if($("#"+i+"x"+j).hasClass("tile") && $("#"+i+"x"+(j-1)).hasClass("block")){
-                                var curStyle = $("#"+i+"x"+j).attr("style");
-                                $("#"+i+"x"+(j-1)).attr("style", curStyle);
-                                $("#"+i+"x"+(j-1)).addClass( "tile" );
-                                $("#"+i+"x"+(j-1)).removeClass( "block" );
-                                $("#"+i+"x"+j).attr("style", "");
-                                $("#"+i+"x"+j).addClass( "block" );
-                                $("#"+i+"x"+j).removeClass( "tile" );
-                                if($("#"+i+"x"+j).hasClass("center")){
-                                    $("#"+i+"x"+j).removeClass("center");
-                                    $("#"+i+"x"+(j-1)).addClass("center");
-                                } 
+                           switchB(i, j, i, (j-1));
                         } 
                     }
                 }
@@ -351,144 +342,97 @@ $( document ).ready(function() {
                 }
                 makeTile();      //  back to makin tiles
             }
-            // this function is made to make the next one easier to go through
-            //  it takes all the qualities of a block at x, y  and gives it to another at x2, y2
-            function replaceBlock(a, b, c, d){
-                $("#"+a+"x"+b).attr("class", ($("#"+c+"x"+d)).attr("class"));
-                $("#"+a+"x"+b).attr("style", ($("#"+c+"x"+d)).attr("style"));
-                if($("#"+c+"x"+d).hasClass("center")){
-                    $("#"+a+"x"+b).addClass("center");
-                }
-            }
-            //  I am not going to explain this one much, but this flips the 'tiles'
-            //  this was by far hardest aspect of the game to code
-            //  if you can understand whats happening, that's awesome!
+
+            //  this was probably the hardest aspect of the game to code
+            //  this spins the tiles around
             //  I would love to hear of another approach if you think you have one!
             function flipTile(){
                 for(var i=1; i<23; i++){
                     for(var j=1; j<11; j++){
                         if($("#"+i+"x"+j).hasClass("center")){
-                            if($("#"+i+"x"+j).attr("style")=="background-image: url(images/orange.jpg)"){
-                                if(i==1 || i==2 || i == 22 || i==21 || j==1 || j==2 || j==10 || j==9){
-                                    return;
+                            // the orange tile is a special case, as its the only shape with length 4
+                            // this checks for room to flip
+                            if($("#"+i+"x"+j).attr("style")=="background-image: url(images/orange.jpg)"){  
+                                if(i==1 || i==2 || i == 22 || i==21 || j==1 || j==2 || j==10 || j==9) return;
+                                for(var r=(-2); r<3; r++){
+                                    if($("#"+(i+r)+"x"+j).hasClass("set") || $("#"+i+"x"+(j+r)).hasClass("set")) return;
                                 }
-                                if($("#"+(i+1)+"x"+j).hasClass("set") || $("#"+(i+2)+"x"+j).hasClass("set") || $("#"+(i-1)+"x"+j).hasClass("set") || $("#"+(i-2)+"x"+j).hasClass("set") || $("#"+i+"x"+(j+1)).hasClass("set") || $("#"+i+"x"+(j-1)).hasClass("set") || $("#"+i+"x"+(j+2)).hasClass("set") || $("#"+i+"x"+(j-2)).hasClass("set")){
-                                    return;
-                                }
-                                var lineClass = $("#"+i+"x"+(j-1)).attr("class");
-                                var lineStyle = $("#"+i+"x"+(j-1)).attr("style");
-                                replaceBlock(i, (j-1), (i+1), j);
-                                replaceBlock((i+1), j, i, (j+1));
-                                replaceBlock(i, (j+1), (i-1), j);
-                                $("#"+(i-1)+"x"+j).attr("class", lineClass);
-                                $("#"+(i-1)+"x"+j).attr("style", lineStyle);
-                                lineClass = $("#"+(i-2)+"x"+j).attr("class");
-                                lineStyle = $("#"+(i-2)+"x"+j).attr("style");
-                                replaceBlock((i-2), j, i, (j-2));
-                                replaceBlock(i, (j-2), (i+2), j);
-                                replaceBlock((i+2), j, i, (j+2));
-                                $("#"+i+"x"+(j+2)).attr("class", lineClass);
-                                $("#"+i+"x"+(j+2)).attr("style", lineStyle);
+                                // heres the flip
+                                switchB(i, (j-1), (i+1), j);
+                                switchB((i+1), j, i, (j+1));
+                                switchB(i, (j+1), (i-1), j);
+                                switchB((i-2), j, i, (j-2));
+                                switchB(i, (j-2), (i+2), j);
+                                switchB((i+2), j, i, (j+2));
                                 return;
 
                             }
-                                if(j==10 || j==1 || i==22 || i==1){
-                                    return;
+                            // all other blocks can be flipped as so
+                            if(j==10 || j==1 || i==22 || i==1) return;
+                            for(var u=(-1); u<2; u++){
+                                for(var w=(-1); w<2; w++){
+                                    if($("#"+u+"x"+w).hasClass("set")) return;
                                 }
-                                if($("#"+(i+1)+"x"+j).hasClass("set") || $("#"+(i+1)+"x"+(j-1)).hasClass("set") || $("#"+(i+1)+"x"+(j+1)).hasClass("set") || $("#"+(i-1)+"x"+(j-1)).hasClass("set") || $("#"+i+"x"+(j+1)).hasClass("set") || $("#"+i+"x"+(j-1)).hasClass("set") || $("#"+(i-1)+"x"+j).hasClass("set") || $("#"+(i-1)+"x"+(j+1)).hasClass("set")){
-                                    return;
-                                }
-                                var startClass = $("#"+i+"x"+(j-1)).attr("class");
-                                var startStyle = $("#"+i+"x"+(j-1)).attr("style");
-                                replaceBlock(i, (j-1), (i+1), j);
-                                replaceBlock((i+1), j, i, (j+1));
-                                replaceBlock(i, (j+1), (i-1), j);
-                                $("#"+(i-1)+"x"+j).attr("class", startClass);
-                                $("#"+(i-1)+"x"+j).attr("style", startStyle);
-                                startClass = $("#"+(i-1)+"x"+(j-1)).attr("class");
-                                startStyle = $("#"+(i-1)+"x"+(j-1)).attr("style");
-                                replaceBlock((i-1), (j-1), (i+1), (j-1));
-                                replaceBlock((i+1), (j-1), (i+1), (j+1));
-                                replaceBlock((i+1), (j+1), (i-1), (j+1));
-                                $("#"+(i-1)+"x"+(j+1)).attr("class", startClass);
-                                $("#"+(i-1)+"x"+(j+1)).attr("style", startStyle);
-                                return;
+                            }
+                            switchB(i, (j-1), (i+1), j);
+                            switchB((i+1), j, i, (j+1));
+                            switchB(i, (j+1), (i-1), j);
+                            switchB((i-1), (j-1), (i+1), (j-1));
+                            switchB((i+1), (j-1), (i+1), (j+1));
+                            switchB((i+1), (j+1), (i-1), (j+1));
+                            return;
                         }
                     }
                 }
             }
-                //  this unbinds the key events 
-                // this is done because everytime we get down a lil further, they are given the event trigger
-                //  this  can cause the buttons to trigger the event function multiple times
-                // if your wondering why its set up like this in the first place, i found 
-                // it was essential to keeping the game flow continuous and to avoid
-                // triggering of multiple events at the same time, crashing the system
-                $("#downButton").unbind();
-                $("#rightButton").unbind();
-                $("#leftButton").unbind();
-                $("#turnTile").unbind();
+            // heres the keysafety measure to make sure the event is assigned to the buttons once
+            // but also keeps the events within scope
+            if(keySafety==1){
+                //these assign events to the onscreen buttons
                 $("#downButton").click(function(){
-                    if ($("#resume").attr("data-name")=="true"){   // pause check
-                           return;
-                        }
+                    if ($("#resume").attr("data-name")=="true") return; // pause checks
                         moveTileDown();
                 });
-                //these match the on screen buttons with the appropriate function
                 $("#turnTile").click(function(){
-                    if ($("#resume").attr("data-name")=="true"){
-                           return;
-                        }
+                    if ($("#resume").attr("data-name")=="true") return;
                     flipTile();
                 });
                 $("#rightButton").click(function(){
-                    if ($("#resume").attr("data-name")=="true"){
-                           return;
-                        }
+                    if ($("#resume").attr("data-name")=="true") return;
                     moveTileRight();
                 });
                 $("#leftButton").click(function(){
-                    if ($("#resume").attr("data-name")=="true"){
-                           return;
-                        }
+                    if ($("#resume").attr("data-name")=="true") return;
                     moveTileLeft();
                 });
+            }
 
-                // these are the keyboard keys attached to functions
-                if(keySafety==1){      //  remember that thing i said not to worry about? this prevents double event triggering
-                    $(window).keydown(function(e) {   
-                        if ($("#resume").attr("data-name")=="true"){  // pause check
+            // these are the events attached to the keyboard
+            if(keySafety==1){     
+                $(window).keydown(function(e) {   
+                    if ($("#resume").attr("data-name")=="true"){  // pause check
+                       return;
+                    }
+                    switch (e.keyCode) {
+                        case 37: moveTileLeft();
+                             return;
+                        case 38: flipTile();
+                             e.preventDefault();
+                            return;
+                        case 39: moveTileRight();
+                            return;
+                        case 40: moveTileDown();
+                             e.preventDefault();
                            return;
-                        }
-                        switch (e.keyCode) {
-                            case 37: moveTileLeft();
-                                 return;
-                            case 38: flipTile();
-                                 e.preventDefault();
-                                return;
-                            case 39: moveTileRight();
-                                return;
-                            case 40: moveTileDown();
-                                 e.preventDefault();
-                               return;
-                        }
-                    });
-                }
-
-                //  and finally we get here
-                //  notice at the bottom we have the interval to move tiles down
-                // the scope will turn to this section everytime a tile is made(yes we are still in the make tile function)
-                // this causes multiple intervals to be made.
-                //  so this next part is a rather ambiguous way of clearing any possible interval(they can really add up..trust me)
-                // and then a new interval is made based on the number calculated before in data-name
-                // hope that helped explain. thanks for playing!
-                for (var i = 1; i < 999; i++) {
-                window.clearInterval(i);
-                }
-                var timeInterval = parseInt($("#level").attr("data-name"));
+                    }
+                });
+            }
+            // and finally we get to the initial time interval 
+            // hope that helped explain. thanks for playing!
+            if(keySafety==1){
                 var timer = setInterval(function(){ moveTileDown() }, timeInterval);
-           
+            }
         }
-
     });
 });
 
