@@ -92,7 +92,7 @@ $( document ).ready(function() {
                 $("#sound").prop("volume", 0.1);
                 // this rather ambiguous loop assures there are no loops before making a new one. 
                 // they really add up fast otherwise. Cant seem to figure out why
-                for(var i=0; i<999; i++){
+                for(var i=0; i<100; i++){
                 clearInterval(i);
                 }
                 var timerTwo = setInterval(function(){ moveTileDown() }, timeInterval);

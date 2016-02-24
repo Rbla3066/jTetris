@@ -242,4 +242,42 @@ audio {width: 195px}
 @-webkit-viewport {
   orientation: landscape;
 }
+@media screen and (max-width: 1024px) {
+	#song {
+		display: none;
+	}
+	#back{
+		height: 0px;
+		width: 0px;
+		padding-top:0px;
+		padding-bottom:0px;
+	}
+}
+@media screen and (max-width: 480px) {
+	#song {
+		display: none;
+	}
+	#back{
+		height: 480px;
+		padding-top: 0px;
+		padding-bottom: 0px;
+	}
+	#footer {
+		display: none;
+		background-image: url();
+	}
+}
+html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                background-color: green;
+            }
+            #container {
+                width: inherit;
+                height: inherit;
+                margin: 0;
+                padding: 0;
+            }
 
