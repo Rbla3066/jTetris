@@ -3,7 +3,7 @@
 <html>
     <head>
         <title>Tetris</title>
-        <meta name="viewport" content="width=device-width, initial-scale=0.7, minimum-scale=0.7, user-scalable=no">
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=0.8, user-scalable=no">
         <link rel="stylesheet" href="style.css">
         <script src="jquery-2.2.0.js"></script>
     </head>
@@ -38,7 +38,7 @@
         <script type="text/javascript">
 
 // this function creates the playing board for the blocks 
-// the top to rows are hidden by a div
+// the top two rows are hidden by a div
 // each div is given an id relavant to its x, y coordinates 
 $( document ).ready(function() {
     for(var i=1; i<23; i++){
@@ -46,7 +46,7 @@ $( document ).ready(function() {
              $("#play-screen").append("<div id='"+i+"x"+j+"' class='block' style=''></div>");
         }
     }
-    // these next to functions are to pause and resume the game. 
+    // these next two functions are to pause and resume the game. 
     // functions throughout the game check the data-name of #resume before doing anything
     // the buttons trigger the display of eachother on/off
     $("#resume").click(function() {
@@ -168,16 +168,14 @@ $( document ).ready(function() {
                 for(var i=b; i>1; i--){
                     for(var j=1; j<11; j++){
                         switchB(i, j, (i-1), j);
-                    }
-                }
+                    };
+                };
                 for(j=1; j<11; j++){
                     $("#1x"+j).attr("class", "block");
                     $("#1x"+j).attr("style", "");
                     $("#1x"+j).removeClass("center");
-                }
-            }
-
-
+                };
+            };
             // this function is called upon every interval and down key
             function moveTileDown() {
                 if ($("#resume").attr("data-name")=="true"){    // pause check
@@ -373,7 +371,7 @@ $( document ).ready(function() {
                             if(j==10 || j==1 || i==22 || i==1) return;
                             for(var u=(-1); u<2; u++){
                                 for(var w=(-1); w<2; w++){
-                                    if($("#"+u+"x"+w).hasClass("set")) return;
+                                    if($("#"+(u+i)+"x"+(w+j)).hasClass("set")) return;
                                 }
                             }
                             switchB(i, (j-1), (i+1), j);

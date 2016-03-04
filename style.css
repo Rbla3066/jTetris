@@ -151,7 +151,9 @@ audio {width: 195px}
 	margin-top: 25px;
 
 }
-
+#back{
+	padding-top: 25px;
+}
 #level-text {
 	text-shadow: 3px 3px 0px #2c2e38;
 	color: #d7ceb2;
@@ -180,13 +182,6 @@ audio {width: 195px}
 	padding-right: 10px;
 
 }
-#back {
-	background-color: black;
-	background-size: cover;
-	padding-top: 50px;
-	padding-bottom: 50px;
-	height: 1000px;
-}
 #score {
 	font-size: 18px;
 	color: white;
@@ -213,59 +208,52 @@ audio {width: 195px}
 	left: 120px;
 }
 @-ms-viewport {
-	width: device-width;
-}
-@viewport {
-  min-width: 800px;
-  max-width: 800px;
-}
-@viewport {
-  zoom: 0.5;
+  orientation: landscape;
+  	  zoom: 0.5;
   min-zoom: 0.5;
   max-zoom: 0.5;
 }
 @viewport {
-  orientation: landscape;
-}
-@-webkit-viewport {
 	width: device-width;
-}
-@-webkit-viewport {
-  min-width: 800px;
-  max-width: 800px;
-}
-@-webkit-viewport {
   zoom: 0.5;
   min-zoom: 0.5;
   max-zoom: 0.5;
+  orientation: landscape;
 }
 @-webkit-viewport {
   orientation: landscape;
+  	width: device-width;
+  	  zoom: 1;
+  min-zoom: 1;
+  max-zoom: 1;
 }
+
+
 @media screen and (max-width: 780px) {
 	#song {
 		display: none;
 	}
-	#back{
-		height: 0px;
-		width: 0px;
-		padding-top:0px;
-		padding-bottom:0px;
+	#back {
+		padding: 0px;
+	}
+	#wrapper {
+		height: 540px;
 	}
 }
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 320px) {
 	#song {
 		display: none;
-	}
-	#back{
-		height: 0px;
-		padding-top: 0px;
-		padding-bottom: 0px;
 	}
 	#footer {
 		display: none;
 		background-image: url();
+
 	}
+	#side-scrren{
+		clear:both;
+		margin: auto;
+	}
+
 }
 html, body {
                 width: 100%;
